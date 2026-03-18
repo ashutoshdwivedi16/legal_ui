@@ -1,0 +1,546 @@
+:root{
+  --bg-app: #f5f5f7;
+  --bg-panel: #ffffff;
+  --bg-soft: #fafafa;
+
+  --text: #1f2933;
+  --text-strong: #111827;
+  --text-muted: #6b7280;
+  --text-faint: #9ca3af;
+
+  --border: #e5e7eb;
+  --border-2: #d1d5db;
+
+  --primary: #db2777;
+  --primary-2: #f43f5e;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
+/* =========================
+   Builder layout
+   ========================= */
+
+.builder{
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-app);
+  color: var(--text);
+}
+
+.builder__header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.25rem 2.5rem;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.builder__header h1{
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.builder__eyebrow{
+  margin: 0 0 .35rem;
+  text-transform: uppercase;
+  font-size: .82rem;
+  letter-spacing: .08em;
+  color: #b91c1c;
+}
+
+.builder__actions{
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.builder__actions button{
+  border: 1px solid var(--border-2);
+  border-radius: 999px;
+  background: #fff;
+  color: #1f2937;
+  padding: .45rem 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color .15s ease, color .15s ease, background-color .15s ease;
+}
+.builder__actions button:hover{ border-color: #9ca3af; }
+
+.builder__actions .primary{
+  background: var(--primary-2);
+  border-color: var(--primary-2);
+  color: #fff;
+}
+
+.builder__actions .outlined{
+  border-color: var(--primary-2);
+  color: #f43f5e;
+}
+
+/* Device switch */
+.devices{
+  display: inline-flex;
+  border: 1px solid var(--border-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.devices button{
+  border: 0;
+  border-right: 1px solid var(--border-2);
+  background: transparent;
+}
+.devices button:last-child{ border-right: 0; }
+.devices button.active{
+  background: var(--primary-2);
+  color: #fff;
+}
+
+.builder__body{
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 260px;
+  gap: 1.5rem;
+  padding: 1.5rem 2.5rem 2rem;
+}
+
+/* =========================
+   Sidebars
+   ========================= */
+
+.sidebar{
+  background: var(--bg-panel);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sidebar__heading{
+  margin: 0;
+  padding: 1rem 1.25rem;
+  font-size: .95rem;
+  font-weight: 600;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.sidebar__panel{
+  flex: 1;
+  overflow: auto;
+  padding: 1rem;
+  background: var(--bg-soft);
+}
+
+/* Blocks panel (left) – keep light */
+.sidebar__panel .gjs-blocks-c,
+.sidebar__panel .gjs-block-category,
+.sidebar__panel .gjs-blocks-wrapper,
+.sidebar__panel .gjs-block-category-title{
+  background: #fff !important;
+}
+
+.sidebar__panel .gjs-block-category-title{
+  color: var(--text-strong);
+  border-bottom: 1px solid #f0f0f0;
+  font-weight: 600;
+}
+
+.sidebar__panel .gjs-block{
+  border-radius: 10px;
+  border-color: var(--border);
+  padding: .75rem;
+  background: #fff;
+  color: var(--text-strong);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.02);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.sidebar__panel .gjs-block:hover{
+  border-color: var(--primary);
+  box-shadow: 0 5px 18px rgba(219,39,119,.15);
+}
+.sidebar__panel .gjs-block svg{
+  width: 26px;
+  height: 26px;
+  margin-bottom: .35rem;
+  color: #6b7280;
+}
+.sidebar__panel .gjs-block-label{
+  font-size: .75rem;
+  color: #374151;
+}
+
+/* Props panel (right) */
+.sidebar__panel--props{
+  position: relative;
+  background: #fff;
+}
+
+.sidebar__panel--props .placeholder{
+  position: absolute;
+  inset: 1rem;
+  border: 1px dashed var(--border-2);
+  border-radius: 10px;
+  display: grid;
+  place-items: end;
+  text-align: center;
+  color: var(--text-faint);
+  font-size: .9rem;
+  pointer-events: none;
+  background: rgba(249,250,251,.85);
+  padding: .75rem;
+}
+
+/* StyleManager sectors (if you mount them) */
+.sidebar__panel--props .gjs-sm-sectors,
+.sidebar__panel--props .gjs-sm-sector,
+.sidebar__panel--props .gjs-sm-properties,
+.sidebar__panel--props .gjs-sm-property{
+  background: transparent;
+}
+.sidebar__panel--props .gjs-sm-sector{
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: .85rem;
+}
+.sidebar__panel--props .gjs-sm-sector-title{
+  background: transparent;
+  color: var(--text-strong);
+  font-weight: 600;
+}
+
+
+/* =========================
+   Canvas
+   ========================= */
+
+.canvas{
+  position: relative;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: #fdfdfd;
+  box-shadow: 0 20px 40px rgba(15,23,42,.08);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  align-items: center;
+  justify-content: flex-start;
+  width: 625px !important;
+}
+
+.canvas__surface{
+  width: 625px !important;
+  min-height: 0;
+}
+
+.canvas__loading{
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: rgba(255,255,255,.8);
+  z-index: 2;
+}
+
+/* Ensure iframe canvas scrolls instead of the page */
+.canvas .gjs-cv-canvas,
+.canvas .gjs-cv-canvas__frames,
+.canvas .gjs-cv-canvas__frame,
+.canvas .gjs-canvas,
+.canvas .gjs-frame-wrapper,
+.canvas iframe{
+  background: #fff !important;
+  width: 100%;
+}
+/* Hide device + top panels completely */
+.canvas .gjs-pn-devices,
+.canvas .gjs-pn-panel,
+.canvas .gjs-pn-top,
+.canvas .gjs-pn-views-container,
+.canvas .gjs-pn-options {
+  display: none !important;
+}
+
+/* Remove reserved space above canvas */
+.canvas .gjs-cv-canvas {
+  top: 0 !important;
+  height: 100% !important;
+}
+
+/* Ensure frame fills canvas */
+.canvas .gjs-frame-wrapper,
+.canvas iframe {
+  top: 0 !important;
+}
+
+/* =========================
+   Responsive
+   ========================= */
+
+@media (max-width: 1200px){
+  .builder__body{ grid-template-columns: 220px minmax(0, 1fr); }
+  .builder__body > .sidebar:last-child{ display: none; }
+}
+
+@media (max-width: 900px){
+  .builder__header{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .builder__actions{ flex-wrap: wrap; }
+  .builder__body{ grid-template-columns: minmax(0, 1fr); }
+  .builder__body > .sidebar:first-child{ order: 2; }
+}
+
+/* =========================
+   Preview modal
+   ========================= */
+
+.preview-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  z-index: 999;
+}
+
+.preview-modal{
+  width: min(960px, 100%);
+  height: min(90vh, 760px);
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 80px rgba(15,23,42,.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.preview-modal header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.preview-modal header button{
+  border: 0;
+  background: var(--primary-2);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: .4rem 1.2rem;
+  cursor: pointer;
+}
+
+.preview-modal iframe{
+  flex: 1;
+  border: 0;
+  width: 100%;
+  background: #fff;
+}
+
+
+/* =========================
+   TraitManager (shared styles)
+   Apply to both:
+   - #builder-props-panel
+   - #builder-traits-panel
+   ========================= */
+
+#builder-props-panel,
+#builder-traits-panel{
+  background: #fff !important;
+  color: var(--text-strong) !important;
+}
+
+/* Common GrapesJS theme wrappers that can introduce dark bg */
+#builder-props-panel .gjs-one-bg,
+#builder-props-panel .gjs-three-bg,
+#builder-props-panel .gjs-trt-manager,
+#builder-props-panel .gjs-trt-traits,
+#builder-traits-panel .gjs-one-bg,
+#builder-traits-panel .gjs-three-bg,
+#builder-traits-panel .gjs-trt-manager,
+#builder-traits-panel .gjs-trt-traits{
+  background: #fff !important;
+  color: var(--text-strong) !important;
+}
+
+/* Trait list padding (only where you wanted tighter list) */
+#builder-traits-panel .gjs-trt-traits{
+  padding: .75rem !important;
+}
+
+/* Trait row */
+#builder-props-panel .gjs-trt-trait,
+#builder-traits-panel .gjs-trt-trait{
+  background: #fff !important;
+  color: var(--text-strong) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: none !important;
+}
+
+#builder-props-panel .gjs-trt-trait__wrp,
+#builder-traits-panel .gjs-trt-trait__wrp{
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* Labels */
+#builder-props-panel .gjs-label,
+#builder-traits-panel .gjs-label{
+  color: var(--text-strong) !important;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Field wrapper */
+#builder-props-panel .gjs-field,
+#builder-traits-panel .gjs-field{
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* Inputs (all common controls) */
+#builder-props-panel input,
+#builder-props-panel select,
+#builder-props-panel textarea,
+#builder-traits-panel input,
+#builder-traits-panel select,
+#builder-traits-panel textarea{
+  background: #fff !important;
+  color: var(--text-strong) !important;
+  border: 1px solid var(--border-2) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+#builder-props-panel input:focus,
+#builder-props-panel select:focus,
+#builder-props-panel textarea:focus,
+#builder-traits-panel input:focus,
+#builder-traits-panel select:focus,
+#builder-traits-panel textarea:focus{
+  border-color: var(--text-strong);
+  outline: none;
+}
+
+#builder-props-panel input::placeholder,
+#builder-props-panel textarea::placeholder,
+#builder-traits-panel input::placeholder,
+#builder-traits-panel textarea::placeholder{
+  color: var(--text-faint);
+}
+
+/* Trait header */
+#builder-props-panel .gjs-trt-header,
+#builder-traits-panel .gjs-trt-header{
+  background: transparent !important;
+  color: var(--text-strong) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+/* Remove any weird separators */
+#builder-props-panel .gjs-trt-trait hr,
+#builder-props-panel .gjs-sm-sep,
+#builder-traits-panel .gjs-trt-trait hr,
+#builder-traits-panel .gjs-sm-sep{
+  border-color: var(--border) !important;
+}
+
+/* =========================================================
+   Traits panel checkbox (GrapesJS)
+   ========================================================= */
+
+#builder-traits-panel{
+  background: #fff !important;
+  color: #111827 !important;
+}
+
+/* wrapper + label text */
+#builder-traits-panel .gjs-trt-trait{
+  background: transparent !important;
+}
+
+#builder-traits-panel .gjs-label{
+  color: #111827 !important;
+}
+
+/* the visible checkbox box is the LABEL, not the input */
+#builder-traits-panel .gjs-field-wrp--checkbox .gjs-field-checkbox{
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  border: 1px solid #9ca3af !important;
+  background: #fff !important;
+  border-radius: 4px;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none !important;
+}
+
+/* hide native checkbox so it doesn't interfere */
+#builder-traits-panel .gjs-field-wrp--checkbox .gjs-field-checkbox > input[type="checkbox"]{
+  position: absolute !important;
+  opacity: 0 !important;
+  width: 1px !important;
+  height: 1px !important;
+  pointer-events: none !important;
+}
+
+/* tick mark element */
+#builder-traits-panel .gjs-field-wrp--checkbox .gjs-field-checkbox .gjs-chk-icon{
+  width: 12px;
+  height: 12px;
+  display: inline-block !important;
+  color: #fff !important;          /* tick color */
+  background: transparent !important;
+}
+
+/* checked state: GrapesJS toggles class on label */
+#builder-traits-panel .gjs-field-wrp--checkbox .gjs-field-checkbox.gjs-field-checkbox--checked,
+#builder-traits-panel .gjs-field-wrp--checkbox .gjs-field-checkbox:has(input:checked){
+  background: var(--text-faint) !important;
+  border-color: var(--text-faint) !important;
+}
+
+/* ensure tick is visible when checked */
+#builder-traits-panel .gjs-field-wrp--checkbox .gjs-field-checkbox.gjs-field-checkbox--checked .gjs-chk-icon,
+#builder-traits-panel .gjs-field-wrp--checkbox .gjs-field-checkbox:has(input:checked) .gjs-chk-icon{
+  color: #fff !important;
+}
+
+/* focus ring (keyboard / click) */
+#builder-traits-panel .gjs-field-wrp--checkbox .gjs-field-checkbox:focus-within{
+  box-shadow: 0 0 0 3px rgba(219,39,119,.15) !important;
+  border-color: var(--text-faint) !important;
+}
+
+.builder__center{
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 1rem;
+  min-height: 0;
+  justify-content: center;
+}

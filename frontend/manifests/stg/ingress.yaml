@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  labels:
+    app.kubernetes.io/instance: lg-admin-admin-service-fe-stg
+    app.kubernetes.io/name: lg-admin-admin-service-fe-ingress
+  name: lg-admin-admin-service-fe-ingress
+  namespace: admin-service
+spec:
+  rules:
+  - host: lg-admin.lgcomus-stg.lge.com 
+    http:
+      paths:
+      - backend:
+          service:
+            name: lg-admin-admin-service-fe-stg
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+
+

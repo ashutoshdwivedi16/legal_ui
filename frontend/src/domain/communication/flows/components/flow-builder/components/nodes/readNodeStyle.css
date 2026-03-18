@@ -1,0 +1,14 @@
+.read-node-container {
+    padding: 10px;
+    border-radius: var(--xy-node-border-radius-default);
+}
+
+.read-node-container.active {
+    border: 2px solid var(--color-green-700);
+    background-color: var(--color-green-50);
+}
+
+.read-node-container.error {
+    border: 2px solid var(--color-red-700);
+    background-color: var(--color-red-50);
+}

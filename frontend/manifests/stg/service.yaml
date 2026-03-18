@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lg-admin-admin-service-fe-stg
+  labels:
+    app.kubernetes.io/instance: lg-admin-admin-service-fe-stg
+    app.kubernetes.io/name: lg-admin-admin-service-fe-stg
+  annotations:
+  namespace: admin-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/instance: lg-admin-admin-service-fe-stg
+    app.kubernetes.io/name: lg-admin-admin-service-fe-stg
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lg-admin-admin-service-fe-stg-preview
+  labels:
+    app.kubernetes.io/instance: lg-admin-admin-service-fe-stg
+    app.kubernetes.io/name: lg-admin-admin-service-fe-stg
+  annotations:
+  namespace: admin-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/instance: lg-admin-admin-service-fe-stg
+    app.kubernetes.io/name: lg-admin-admin-service-fe-stg

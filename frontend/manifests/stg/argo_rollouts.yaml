@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: lg-admin-admin-service-fe-stg
+  namespace: admin-service
+  labels:
+    app.kubernetes.io/instance: lg-admin-admin-service-fe-stg
+    app.kubernetes.io/name: lg-admin-admin-service-fe-stg
+spec:
+  replicas: MIN_REPLICAS
+  strategy:
+    blueGreen: 
+      activeService: lg-admin-admin-service-fe-stg
+      previewService: lg-admin-admin-service-fe-stg-preview
+      autoPromotionEnabled: true
+      scaleDownDelaySeconds: 120
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: lg-admin-admin-service-fe-stg
+      app.kubernetes.io/name: lg-admin-admin-service-fe-stg
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: lg-admin-admin-service-fe-stg
+        app.kubernetes.io/name: lg-admin-admin-service-fe-stg
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 10
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/name
+                      operator: In
+                      values:
+                        - lg-admin-admin-service-fe-stg
+                topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: lg-admin-admin-service-fe-stg
+          image: IMAGE_VERSION
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: CPU_LIMIT
+              memory: MEMORY_LIMIT
+            requests:
+              memory: MEMORY_REQUEST
+              cpu: CPU_REQUEST

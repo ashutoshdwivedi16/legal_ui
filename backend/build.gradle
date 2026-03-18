@@ -1,0 +1,177 @@
+plugins {
+    id 'org.springframework.boot' version '3.3.2'
+    id 'io.spring.dependency-management' version '1.1.6'
+    id 'java'
+    id "org.sonarqube" version "5.1.0.4882"
+    id 'jacoco'
+    id 'checkstyle'
+}
+
+group = 'com.lg.microservice.admin'
+version = '0.0.1'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+
+configurations {
+    all {
+        resolutionStrategy {
+            eachDependency { details ->
+                if (details.requested.name == 'commons-io') {
+                    details.useVersion "2.7"
+                }
+            }
+        }
+    }
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+
+ext {
+    set('springCloudVersion', "2023.0.3")
+}
+
+
+repositories {
+    mavenCentral()
+    maven {
+        url = "https://nexus.lgcomus-shared.lge.com/repository/maven-releases/"
+    }
+}
+
+dependencies {
+    // spring
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+
+    //Log
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.1.1'
+
+
+    // Feign
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+
+    //Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    //Openapi-ui
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+
+    //Devtools
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    //Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    //microservice common library
+    implementation 'com.lg.microservice:common.lib.correlation:2.1.+'
+    implementation 'com.lg.microservice:common.lib.exception:2.1.+'
+    implementation 'com.lg.microservice:common.lib.flyway:2.1.+'
+    implementation 'com.lg.microservice:common.lib.openapi:2.1.+'
+    implementation 'com.lg.microservice:common.lib.redis:2.1.+'
+    implementation 'com.lg.microservice:common.lib.requestmethod:2.1.+'
+
+    // AWS SDK v2 for Cognito User Management
+    implementation 'software.amazon.awssdk:cognitoidentityprovider:2.25.+'
+
+    // etc.
+    implementation 'org.postgresql:postgresql:42.7.3'
+    implementation "org.flywaydb:flyway-database-postgresql:10.10.0"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+test {
+    systemProperty 'spring.profiles.active', 'TEST'
+    useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
+}
+
+// following folders will not calculate in coverage report
+def jacocoCoverageExclusion = [
+        '**/dao/**',
+        '**/model/**',
+        '**/constant/**',
+        '**/health/**',
+        '**/header/**',
+        '**/utils/**',
+        '**/common/**',
+        '**/*Application.class',
+        '**/test/java/**'
+]
+
+jacoco {
+    toolVersion = '0.8.11'
+}
+
+jacocoTestReport {
+    reports {
+        html.required.set(true) // this is for our developer to local verify.
+        csv.required.set(false) // current is disable, no program use it.
+        xml.required.set(true) // this is for sonarqube required.
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: jacocoCoverageExclusion)
+        }))
+    }
+
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+        }
+    }
+}
+
+sonarqube {
+    properties {
+        property 'sonar.sourceEncoding', 'UTF-8'
+        property 'sonar.exclusions', jacocoCoverageExclusion
+        property 'sonar.coverage.exclusions', jacocoCoverageExclusion
+    }
+}
+
+tasks.named('sonarqube').configure {
+    dependsOn test
+}
+bootRun {
+    sourceResources sourceSets.main
+}
+
+checkstyle {
+    toolVersion = '10.17.0'
+    configFile file("config/checkstyle/checkstyle.xml")
+    checkstyleTest.enabled = false
+    reportsDir = file("$project.buildDir/checkstyleReports")
+}
+
+checkstyleMain {
+    source = 'src/main/java'
+}
+
+checkstyleTest {
+    source = 'src/test/java'
+}

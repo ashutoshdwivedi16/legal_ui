@@ -1,0 +1,173 @@
+spring:
+  profiles:
+    group:
+      "LOCAL": "LOCAL_CFG"
+      "DEV": "DEV_CFG"
+      "DEV_NUM": "DEV_CFG,DEV_NUM"
+      "QA": "QA_CFG"
+      "QA_NUM": "QA_CFG,QA_NUM"
+      "STG": "STG_CFG"
+      "PRD": "PRD_CFG"
+    active:
+  jpa:
+    database: POSTGRESQL
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        default_schema: ${DB_NAME:admin_db}
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}${UNDERSCORE_NUM_PATH:}
+    username: ${DB_APP_USER}
+    password: ${DB_APP_PASSWORD}
+  flyway:
+    enabled: false
+    url: jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}${UNDERSCORE_NUM_PATH:}
+    user: ${DB_MGR_USER}
+    password: ${DB_MGR_PASSWORD}
+    schemas: ${DB_NAME}${UNDERSCORE_NUM_PATH:}
+    out-of-order: false
+    validate-on-migrate: true
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:flyway/common
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      #database: 0
+      #cache-null-values: false
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 60000
+        loggerLevel: basic
+  logging:
+    level: DEBUG
+    enabled: true
+
+springdoc:
+  api-docs:
+    path: '/openapi/v3/docs'
+  openapi:
+    info:
+      title: Admin Service APIs
+      description: Microservices for handling Admin functionalities
+
+server:
+  port: 8080
+  servlet:
+    context-path: /us/common${SLASH_NUM_PATH:}/admin
+  tomcat:
+    threads:
+      max: 2000
+
+appName: admin-service${NUM_PATH:}
+
+application:
+  x-apikey: ${X_APIKEY}
+
+audit:
+  detail-storage: ${AUDIT_DETAIL_STORAGE:db}
+
+auth:
+  provider:
+    type: cognito
+    mode: hosted
+    validation-method: jwk
+    cognito:
+      issuer-uri: ${COGNITO_ISSUER_URI:https://cognito-idp.us-east-1.amazonaws.com/us-east-1_placeholder}
+      user-pool-id: ${COGNITO_USER_POOL_ID:}
+      client-id: ${COGNITO_CLIENT_ID:}
+      client-secret: ${COGNITO_CLIENT_SECRET:}
+      domain: ${COGNITO_DOMAIN:}
+      redirect-uri: ${COGNITO_REDIRECT_URI:http://localhost:3000/api/auth/callback}
+      post-logout-redirect-uri: ${COGNITO_POST_LOGOUT_REDIRECT_URI:http://localhost:3000/}
+    magento:
+      public-key: ${MAGENTO_JWT_PUBLIC_KEY:}
+
+microservice:
+  host: http://microservice.lgcomus-dev.lge.com
+  sample: ${microservice.host}/us/common${SLASH_NUM_PATH:}/admin/v1
+  communication: ${microservice.host}/us/common${SLASH_NUM_PATH:}/communication/v1
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+        - "LOCAL_CFG"
+  flyway:
+    locations: classpath:flyway/common,classpath:flyway/env/local
+    out-of-order: true
+microservice:
+  host: http://microservice.lgcomus-dev.lge.com
+  sample: http://localhost:8080/us/common/admin/mock/sample
+  
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+        - "DEV_CFG"
+  flyway:
+    locations: classpath:flyway/common,classpath:flyway/env/dev
+    out-of-order: true
+microservice:
+  host: http://microservice.lgcomus-dev.lge.com
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+        - "DEV_NUM"
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+        - "QA_CFG"
+  flyway:
+    locations: classpath:flyway/common,classpath:flyway/env/qa
+    out-of-order: true
+microservice:
+  host: http://microservice.lgcomus-qa.lge.com
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+        - "QA_NUM"
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+        - "STG_CFG"
+  flyway:
+    locations: classpath:flyway/common,classpath:flyway/env/stg
+microservice:
+  host: http://microservice.lgcomus-stg.lge.com
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+        - "PRD_CFG"
+  flyway:
+    locations: classpath:flyway/common,classpath:flyway/env/prd
+microservice:
+  host: http://microservice.lgcomus-prd.lge.com

@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+# An example hook script to verify what is about to be committed.
+# Called by "git commit" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message if
+# it wants to stop the commit.
+#
+# To enable this hook, rename this file to "pre-commit".
+
+print() {
+    echo "=================================================="
+    echo "===========$*============"
+    echo "=================================================="
+}
+
+
+
+print " LG Code Check Style Start "
+
+is_err=0
+
+./gradlew checkstyleMain
+
+
+err=`cat build/checkstyleReports/main.xml | grep "error"`
+if [[ $err == *"error"* ]];
+then
+    is_err=1
+fi
+
+print "  LG Code Check Style End  "
+
+if [ $is_err -ne 0 ];
+then
+    print " please check style first! "
+    exit 1
+fi
+
+exit 0

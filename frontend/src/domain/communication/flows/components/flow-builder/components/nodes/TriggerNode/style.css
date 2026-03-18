@@ -1,0 +1,7 @@
+.trigger-node-container {
+    padding: 10px;
+    border-radius: var(--xy-node-border-radius-default);
+    min-width: 200px;
+    background-color: rgb(165, 0, 52);
+    color: white;
+}
