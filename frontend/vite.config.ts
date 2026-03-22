@@ -20,10 +20,24 @@ export default defineConfig({
       usePolling: true,
     },
     proxy: {
-      '/api': {
-        target: 'http://backend:8080/us/common/admin',
+      // ── All compliance AI endpoints ───────────────────────────────────
+      // /us/common/ai/v1/compliance/**  →  http://localhost:9090 (real FastAPI backend)
+      '/us/common/ai': {
+        target: 'http://localhost:9090',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      // ── All admin endpoints (users, roles, auth, audit-logs, …) ──────
+      // /us/common/admin/v1/**  →  http://localhost:8080 (same path)
+      '/us/common/admin': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+      // ── axios baseURL is /api/v1 so requests arrive as /api/v1/xyz ───
+      // Strip /api/v1  →  /us/common/admin/v1/xyz  (no double /v1)
+      '/api/v1': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/v1/, '/us/common/admin/v1'),
       },
     },
   },

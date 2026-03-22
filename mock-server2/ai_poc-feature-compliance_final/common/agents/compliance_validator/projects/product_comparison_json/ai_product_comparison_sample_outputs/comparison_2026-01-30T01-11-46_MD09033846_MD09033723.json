@@ -1,0 +1,86 @@
+{
+  "summary": {
+    "quickPick": [
+      {
+        "productId": "OLED77C5PUA",
+        "productName": "77 Inch Class LG OLED evo AI C5 4K Smart TV 2025",
+        "useCases": "you mainly watch in a darker room, prefer using a tabletop stand, or want excellent OLED picture quality at a lower price point"
+      },
+      {
+        "productId": "OLED77G5WUA",
+        "productName": "77 Inch Class LG OLED evo AI G5 4K Smart TV 2025 with Supplied Wall Mount",
+        "useCases": "your room has lots of natural light, you want to wall-mount flush to the wall, or you play fast-paced competitive games on PC"
+      }
+    ],
+    "differentiators": [
+      {
+        "key": "brightness_booster",
+        "label": "Brightness",
+        "products": [
+          {
+            "productId": "OLED77C5PUA",
+            "summary": "Features Brightness Booster technology for enhanced luminance in bright environments, reaching up to 800 nits peak brightness."
+          },
+          {
+            "productId": "OLED77G5WUA",
+            "summary": "Boasts Brightness Booster Ultimate, significantly increasing peak brightness to 2,100 nits for exceptional performance in very bright rooms."
+          }
+        ]
+      },
+      {
+        "key": "refresh_rate",
+        "label": "Refresh Rate",
+        "products": [
+          {
+            "productId": "OLED77C5PUA",
+            "summary": "Offers a 120Hz native refresh rate with VRR support up to 144Hz, suitable for smooth gaming and sports."
+          },
+          {
+            "productId": "OLED77G5WUA",
+            "summary": "Supports a 120Hz native refresh rate with VRR capabilities up to 165Hz, ideal for high-refresh-rate gaming and fast-paced content."
+          }
+        ]
+      },
+      {
+        "key": "picture_processor",
+        "label": "Picture Processor",
+        "products": [
+          {
+            "productId": "OLED77C5PUA",
+            "summary": "Utilizes α9 AI Processor 4K Gen8 for advanced picture optimization and upscaling."
+          },
+          {
+            "productId": "OLED77G5WUA",
+            "summary": "Features α11 AI Processor 4K Gen2, offering enhanced AI-powered picture and sound improvements."
+          }
+        ]
+      },
+      {
+        "key": "vrr",
+        "label": "Gaming Performance",
+        "products": [
+          {
+            "productId": "OLED77C5PUA",
+            "summary": "Includes VRR support up to 144Hz, G-Sync Compatible, and FreeSync for a smooth gaming experience."
+          },
+          {
+            "productId": "OLED77G5WUA",
+            "summary": "Offers VRR support up to 165Hz, G-Sync Compatible, and FreeSync, with an enhanced α11 processor for superior gaming performance."
+          }
+        ]
+      }
+    ],
+    "similarities": [
+      "Both use self-lit OLED evo pixels that turn completely off for perfect blacks and infinite contrast.",
+      "Both include LG's webOS 25 smart TV platform with built-in apps for Netflix, Disney+, and major streaming services.",
+      "Both support Dolby Vision, HDR10, and HLG for premium content.",
+      "Both have α9 AI Sound Pro with virtual 11.1.2 up-mix for immersive audio.",
+      "Both are Wi-Fi 6E enabled for fast and reliable wireless connectivity."
+    ],
+    "confidence": "high"
+  },
+  "cached": false,
+  "fallback": false,
+  "reason": null,
+  "raw_llm_response": null
+}

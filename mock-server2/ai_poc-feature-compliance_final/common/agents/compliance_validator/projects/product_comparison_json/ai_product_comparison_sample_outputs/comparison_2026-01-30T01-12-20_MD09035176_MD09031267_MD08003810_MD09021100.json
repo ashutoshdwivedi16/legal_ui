@@ -1,0 +1,128 @@
+{
+  "summary": {
+    "quickPick": [
+      {
+        "productId": "SC9S",
+        "productName": "SC9S LG Soundbar C for TV with Dolby Atmos® and Synergy Bracket 3.1.3 channel, Best OLED matching",
+        "useCases": "you want a high-end soundbar with 3.1.3 channels, Dolby Atmos, and a unique design that matches OLED TVs, or you need a soundbar with a high-resolution audio capability up to 24bit/96kHz"
+      },
+      {
+        "productId": "S70TY",
+        "productName": "S70TY LG Soundbar for TV with Dolby Atmos® 3.1.1 channel",
+        "useCases": "you're looking for a more affordable soundbar with 3.1.1 channels, Dolby Atmos, and enhanced gaming features like VRR up to 120 Hz"
+      },
+      {
+        "productId": "S95TR",
+        "productName": "S95TR LG Home Theater Soundbar with Dolby Atmos® and Rear Speakers, 9.1.5 channel, Best OLED matching",
+        "useCases": "you seek an immersive home theater experience with 9.1.5 channels, Dolby Atmos, DTS:X, and included rear speakers for a complete surround sound setup"
+      },
+      {
+        "productId": "S95AR",
+        "productName": "S95AR LG Home Theater Soundbar for TV with Dolby Atmos® 9.1.5 channel, Best LG OLED matching",
+        "useCases": "you want a high-end home theater soundbar with 9.1.5 channels, Dolby Atmos, and designed specifically for LG OLED TVs, with a focus on high-resolution audio and wireless surround sound"
+      }
+    ],
+    "differentiators": [
+      {
+        "key": "channel_configuration",
+        "label": "Channel Configuration",
+        "products": [
+          {
+            "productId": "SC9S",
+            "summary": "Offers a 3.1.3 channel configuration with up-firing center channel and wireless active subwoofer."
+          },
+          {
+            "productId": "S70TY",
+            "summary": "Features a 3.1.1 channel setup with wireless active subwoofer and support for up to 120 Hz VRR for gaming."
+          },
+          {
+            "productId": "S95TR",
+            "summary": "Boasts a powerful 9.1.5 channel home theater system with included rear speakers and wireless subwoofer."
+          },
+          {
+            "productId": "S95AR",
+            "summary": "Also has a 9.1.5 channel configuration with included rear speakers and wireless subwoofer."
+          }
+        ]
+      },
+      {
+        "key": "audio_formats",
+        "label": "Audio Formats",
+        "products": [
+          {
+            "productId": "SC9S",
+            "summary": "Supports high-resolution audio up to 24bit/96kHz and various formats including Dolby Atmos, DTS:X, and Dolby TrueHD."
+          },
+          {
+            "productId": "S70TY",
+            "summary": "Supports Dolby Atmos, DTS:X, and Dolby TrueHD but lacks DTS-HD High Resolution."
+          },
+          {
+            "productId": "S95TR",
+            "summary": "Supports a wide range of formats including Dolby Atmos, DTS:X, Dolby TrueHD, and DTS-HD High Resolution."
+          },
+          {
+            "productId": "S95AR",
+            "summary": "Also supports Dolby Atmos, DTS:X, Dolby TrueHD, and DTS-HD High Resolution."
+          }
+        ]
+      },
+      {
+        "key": "design_and_tv_matching",
+        "label": "Design & TV Matching",
+        "products": [
+          {
+            "productId": "SC9S",
+            "summary": "Designed specifically for OLED TVs with a synergy bracket for a flush wall mount and up-firing center channel."
+          },
+          {
+            "productId": "S70TY",
+            "summary": "Suitable for TVs 49\" ↑ with a more compact design and LED indicator."
+          },
+          {
+            "productId": "S95TR",
+            "summary": "Includes rear speakers and is designed for OLED G TVs with a focus on immersive home theater."
+          },
+          {
+            "productId": "S95AR",
+            "summary": "Designed for LG OLED TVs with a focus on high-resolution audio and wireless surround sound."
+          }
+        ]
+      },
+      {
+        "key": "connectivity_and_gaming",
+        "label": "Connectivity & Gaming",
+        "products": [
+          {
+            "productId": "SC9S",
+            "summary": "Features Wi-Fi, Bluetooth, and eARC but no specific gaming VRR mention."
+          },
+          {
+            "productId": "S70TY",
+            "summary": "Offers gaming-enhanced VRR/ALLM up to 120 Hz, Wi-Fi, and Bluetooth."
+          },
+          {
+            "productId": "S95TR",
+            "summary": "Supports gaming with VRR/ALLM up to 120 Hz, Wi-Fi, Bluetooth, and optical input."
+          },
+          {
+            "productId": "S95AR",
+            "summary": "Also supports gaming features with VRR/ALLM, Wi-Fi, and Bluetooth."
+          }
+        ]
+      }
+    ],
+    "similarities": [
+      "All support Dolby Atmos and DTS:X for immersive audio.",
+      "All have wireless active subwoofers for flexible placement.",
+      "All support high-resolution audio formats for premium sound.",
+      "All have smartphone remote apps for iOS and Android.",
+      "All support HDMI eARC for easy connectivity."
+    ],
+    "confidence": "high"
+  },
+  "cached": false,
+  "fallback": false,
+  "reason": null,
+  "raw_llm_response": null
+}

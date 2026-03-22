@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: ai-services-prd
+  namespace: ai-service
+  labels:
+    app.kubernetes.io/instance: ai-services-prd
+    app.kubernetes.io/name: ai-services-prd
+spec:
+  replicas: MIN_REPLICAS
+  strategy:
+    blueGreen: 
+      activeService: ai-services-prd
+      previewService: ai-services-prd-preview
+      autoPromotionEnabled: true
+      scaleDownDelaySeconds: 120
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: ai-services-prd
+      app.kubernetes.io/name: ai-services-prd
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: ai-services-prd
+        app.kubernetes.io/name: ai-services-prd
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 10
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/name
+                      operator: In
+                      values:
+                        - ai-services-prd
+                topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: ai-services-prd
+          image: IMAGE_VERSION
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: ai-services-secret-prd
+          resources:
+            limits:
+              cpu: CPU_LIMIT
+              memory: MEMORY_LIMIT
+            requests:
+              memory: MEMORY_REQUEST
+              cpu: CPU_REQUEST

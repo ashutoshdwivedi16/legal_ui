@@ -1,0 +1,114 @@
+[
+  {
+    "id": "legal_rule_01",
+    "rule_name": "No Superlatives",
+    "prompt_instruction": "Reject any use of superlatives or absolutes such as 'best', 'perfect', 'guaranteed', unless explicitly approved by US Legal.",
+    "severity": "CRITICAL",
+    "is_active": true,
+    "source": "agentic_systems/agents/compliance_validator/rules/rules_loader.py"
+  },
+  {
+    "id": "legal_rule_02",
+    "rule_name": "No Hallucinations",
+    "prompt_instruction": "All content must match official product specifications and documentation. Reject any information not supported by official sources.",
+    "severity": "CRITICAL",
+    "is_active": true,
+    "source": "agentic_systems/agents/compliance_validator/rules/rules_loader.py"
+  },
+  {
+    "id": "legal_rule_03",
+    "rule_name": "No Unverified Performance Claims",
+    "prompt_instruction": "Reject any performance claim that cannot be verified, such as 'lasts 20 years', 'saves 50% energy', or similar statements.",
+    "severity": "CRITICAL",
+    "is_active": true,
+    "source": "agentic_systems/agents/compliance_validator/rules/rules_loader.py"
+  },
+  {
+    "id": "legal_rule_04",
+    "rule_name": "No Competitor Comparisons",
+    "prompt_instruction": "Reject any direct or indirect comparison to competitors, e.g., 'better than Sony', unless officially certified.",
+    "severity": "HIGH",
+    "is_active": true,
+    "source": "agentic_systems/agents/compliance_validator/rules/rules_loader.py"
+  },
+  {
+    "id": "legal_rule_05",
+    "rule_name": "No Medical Claims",
+    "prompt_instruction": "Reject any claim implying medical or health benefits, e.g., 'cures asthma', 'improves breathing', or similar.",
+    "severity": "CRITICAL",
+    "is_active": true,
+    "source": "agentic_systems/agents/compliance_validator/rules/rules_loader.py"
+  },
+  {
+    "id": "legal_rule_06",
+    "rule_name": "No Environmental Claims",
+    "prompt_instruction": "Reject any environmental or sustainability claim, e.g., 'green', 'eco-friendly', unless explicitly approved by US Legal.",
+    "severity": "HIGH",
+    "is_active": true,
+    "source": "agentic_systems/agents/compliance_validator/rules/rules_loader.py"
+  },
+  {
+    "id": "legal_rule_07",
+    "rule_name": "No Pricing Claims",
+    "prompt_instruction": "Reject any pricing-related claim that implies superiority or guarantee, e.g., 'lowest price', 'best deal', 'cheapest option', or 'price match guaranteed'.",
+    "severity": "HIGH",
+    "is_active": true,
+    "source": "agentic_systems/agents/compliance_validator/rules/rules_loader.py"
+  },
+  {
+    "id": "legal_rule_08",
+    "rule_name": "No Safety Guarantees",
+    "prompt_instruction": "Reject any statement implying absolute safety, e.g., 'child-proof', '100% safe', unless explicitly documented by LG.",
+    "severity": "CRITICAL",
+    "is_active": true,
+    "source": "agentic_systems/agents/compliance_validator/rules/rules_loader.py"
+  },
+  {
+    "id": "legal_rule_09",
+    "rule_name": "No Unverified Certifications",
+    "prompt_instruction": "Reject any unauthorized or unverified reference to certifications or badges, e.g., 'Energy Star', unless specified in official documentation.",
+    "severity": "HIGH",
+    "is_active": true,
+    "source": "agentic_systems/agents/compliance_validator/rules/rules_loader.py"
+  },
+  {
+    "id": "legal_rule_10",
+    "rule_name": "No Slang",
+    "prompt_instruction": "Reject any use of slang or informal language. Require professional, neutral tone.",
+    "severity": "MEDIUM",
+    "is_active": true,
+    "source": "agentic_systems/agents/compliance_validator/rules/rules_loader.py"
+  },
+  {
+    "id": "legal_rule_11",
+    "rule_name": "No Subjective Adjectives",
+    "prompt_instruction": "Reject any subjective or opinion-based adjectives, e.g., 'mind-blowing', 'amazing', 'incredible', or similar.",
+    "severity": "MEDIUM",
+    "is_active": true,
+    "source": "agentic_systems/agents/compliance_validator/rules/rules_loader.py"
+  },
+  {
+    "id": "legal_rule_12",
+    "rule_name": "No Emojis/Exclamations",
+    "prompt_instruction": "Reject any use of exclamation marks or emojis. Maintain professionalism in all content.",
+    "severity": "MEDIUM",
+    "is_active": true,
+    "source": "agentic_systems/agents/compliance_validator/rules/rules_loader.py"
+  },
+  {
+    "id": "legal_rule_13",
+    "rule_name": "No Trademark Infringement",
+    "prompt_instruction": "Reject any use of third-party trademarks or intellectual property outside of LG trademarks. Respect all IP rights.",
+    "severity": "CRITICAL",
+    "is_active": true,
+    "source": "agentic_systems/agents/compliance_validator/rules/rules_loader.py"
+  },
+  {
+    "id": "legal_rule_14",
+    "rule_name": "No PII",
+    "prompt_instruction": "Reject any content containing personally identifiable information such as names, phone numbers, or similar data.",
+    "severity": "CRITICAL",
+    "is_active": true,
+    "source": "agentic_systems/agents/compliance_validator/rules/rules_loader.py"
+  }
+]

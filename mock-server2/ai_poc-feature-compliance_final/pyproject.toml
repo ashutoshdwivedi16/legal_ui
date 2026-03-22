@@ -1,0 +1,99 @@
+[project]
+name = "product-comparison"
+version = "0.1.0"
+description = "AI Product Comparison Enhancement API for lg.com"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    # Web framework
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+
+    # Configuration
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.6.0",
+
+    # Database
+    "sqlalchemy>=2.0.36",
+    "asyncmy>=0.2.9",
+    "asyncpg>=0.29.0",
+    "cryptography>=42.0.0",
+
+    # Cache (Redis/ElastiCache)
+    "redis>=5.2.0",
+
+    # LLM
+    "litellm>=1.55.0",
+    "google-adk>=1.0.0",
+
+    # AWS
+    "boto3>=1.42.22",
+
+    # Datadog
+    "datadog-api-client>=2.0.0",
+
+    # SSH tunneling
+    "sshtunnel>=0.4.0",
+
+    # HTTP client
+    "httpx>=0.28.0",
+
+    # Retry logic
+    "tenacity>=9.0.0",
+
+    # Env loading
+    "python-dotenv>=1.0.1",
+
+    "prometheus-fastapi-instrumentator>=7.0.0",
+    "opentelemetry-api>=1.20.0",
+    "opentelemetry-sdk>=1.20.0",
+    "opentelemetry-instrumentation-fastapi>=0.40b0",
+    "opentelemetry-exporter-otlp>=1.20.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+    "pre-commit>=4.0.0",
+    "fakeredis>=2.26.0",
+    "pytest-mock>=3.14.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+# Ruff
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C4", "UP"]
+ignore = ["E501", "B008"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["common", "services", "mcp"]
+
+# Pytest
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["common/lib/tests"]
+addopts = "-v --tb=short"
+
+# MyPy
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["litellm.*", "asyncmy.*", "fakeredis.*"]
+ignore_missing_imports = true

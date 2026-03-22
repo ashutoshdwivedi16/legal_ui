@@ -1,0 +1,405 @@
+
+# Variables
+image: 076614340621.dkr.ecr.us-east-1.amazonaws.com/lgcomus-base-docker-shared:latest
+variables:
+  #IMAGE_NAME: "${DOCKER_REGISTRY}:${APP_NAME}-${CI_COMMIT_SHORT_SHA}"
+  IMAGE_SCAN_MIN_PASS_VALUE: "5"
+  APP_NAMESPACE: admin-service
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  IMAGESCANFAILMESSAGE: Image Scan Stage Failed, Please check Vulnerabilities
+  JOB_NAME:
+    value: ""
+    options:
+      - ""
+      - "FE"
+      - "BE"
+      - "ALL"
+    description: "Select the Pipeline job Name"
+
+
+
+stages:
+  - slack
+  - lower-develop-env-merge
+  - lower-qa-env-merge
+  - unit-testing
+  - fe-sonar-scanner
+  - sonar-scanner
+  - qa-approval
+  - build
+  - fe-dev-docker-image
+  - fe-dev-deploy
+  - be-dev-docker-image
+  - be-dev-deploy
+  - dev-swagger-upload
+  - fe-qa-docker-image
+  - fe-qa-deploy
+  - be-qa-docker-image
+  - be-qa-deploy
+  - qa-swagger-upload
+  - check_commit
+  - fe-stg-docker-image
+  - fe-stg-deploy
+  - be-stg-deploy
+  - check_commit_prod
+  - fe-prd-docker-image
+  - fe-prd-deploy
+  - be-prd-deploy
+  - openMr
+
+
+
+include:
+  - local: 'backend-pipeline.yml'
+
+.node-script: &node-script
+  - cd ./frontend 
+  - npm install -g pnpm@10.24.0
+  - pnpm i --frozen-lockfile
+  - export AWS_PROFILE=lgcomus-shared
+  - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 076614340621.dkr.ecr.us-east-1.amazonaws.com
+
+.before-docker-image-script: &before-docker-image-script
+  - rm -rf ./.env.production
+  - touch ./.env.production
+  - cat ${ENV_PROD} >> ./.env.production
+  #- touch ./newrelic.js
+  #- cat $NEWRELIC >> ./newrelic.js
+  - pnpm run build
+  - export IMAGE_NAME=${DOCKER_REGISTRY}:${APP_NAME}-${CI_COMMIT_SHORT_SHA}-${DOCKER_TAG}
+  - export IMAGE_TAG=${APP_NAME}-${CI_COMMIT_SHORT_SHA}-${DOCKER_TAG}
+
+.docker-script: &docker-script
+  - pwd
+  - ls -ltr 
+  - docker build -t ${IMAGE_NAME} .
+  - export AWS_PROFILE=lgcomus-${CI_ENVIRONMENT_NAME}
+  - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+  - docker tag ${IMAGE_NAME} ${IMAGE_NAME}
+  - docker push ${IMAGE_NAME}
+  - aws ecr start-image-scan --repository-name ${REPO_NAME} --image-id imageTag=${IMAGE_TAG} --region us-east-1
+  - aws ecr wait image-scan-complete --repository-name ${REPO_NAME} --image-id imageTag=${IMAGE_TAG} --region us-east-1
+  - aws ecr describe-image-scan-findings --repository-name ${REPO_NAME} --image-id imageTag=${IMAGE_TAG} --region us-east-1 > scanfindings
+  - cat scanfindings
+  ##HIGH Vunlarablity Scan
+  - export VAR_HIGH=$(grep 'HIGH:*' scanfindings | tail -1 | awk '{print$2}' | sed -e 's/,/ /g')
+  - if [ $VAR_HIGH -gt 0 ]; then HIGH=$VAR_HIGH; fi
+  - export HIGH_IMAGESCAN_VALUE=$HIGH
+  - if [ "$HIGH_IMAGESCAN_VALUE" -ge "$IMAGE_SCAN_MIN_HIGH_PASS_VALUE" ]; then echo ${IMAGESCANFAILMESSAGE} SACN VALUE IS ${HIGH_IMAGESCAN_VALUE}; exit 1; fi ;
+  ##CRITICAL Vunlarablity Scan
+  - export VAR_CRITICAL=$(grep 'CRITICAL:*' scanfindings | tail -1 | awk '{print$2}' | sed -e 's/,/ /g')
+  - if [ $VAR_CRITICAL -gt 0 ]; then CRITICAL=$VAR_CRITICAL; fi
+  - export CRITICAL_IMAGESCAN_VALUE=$CRITICAL
+  - if [ "$CRITICAL_IMAGESCAN_VALUE" -ge "$IMAGE_SCAN_MIN_CRITICAL_PASS_VALUE" ]; then echo ${IMAGESCANFAILMESSAGE} SACN VALUE IS ${CRITICAL_IMAGESCAN_VALUE}; exit 1; fi ;
+
+.deploy-script: &deploy-script
+  - export AWS_PROFILE=lgcomus-${CI_ENVIRONMENT_NAME}
+  - export EKS_CLUSTER_NAME=$(eval echo \${EKS_CLUSTER_NAME_$CI_ENVIRONMENT_NAME})
+  - aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION}
+
+.deploy-script-stg-prd: &deploy-script-stg-prd
+  - curl -LO https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64
+  - chmod +x ./kubectl-argo-rollouts-linux-amd64
+  - export AWS_PROFILE=lgcomus-${CI_ENVIRONMENT_NAME}
+  - export EKS_CLUSTER_NAME=$(eval echo \${EKS_CLUSTER_NAME_$CI_ENVIRONMENT_NAME})
+  - aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION}
+
+.common-deploy-script: &common-deploy-script
+  - export IMAGE_NAME=${DOCKER_REGISTRY}:${APP_NAME}-${CI_COMMIT_SHORT_SHA}-${DOCKER_TAG}
+  - sed -i "s,IMAGE_VERSION,${IMAGE_NAME},g" frontend/manifests/${CI_ENVIRONMENT_NAME}/deployment.yaml
+  - kubectl apply -f frontend/manifests/${CI_ENVIRONMENT_NAME}/deployment.yaml
+  - kubectl apply -f frontend/manifests/${CI_ENVIRONMENT_NAME}/service.yaml
+  - kubectl apply -f frontend/manifests/${CI_ENVIRONMENT_NAME}/ingress.yaml
+  - POD_NAME=$(yq eval '.spec.template.spec.containers[0].name' frontend/manifests/${CI_ENVIRONMENT_NAME}/deployment.yaml)
+  - echo "$POD_NAME"
+  - sleep 30
+  - |
+    POD_STATUS=$(kubectl get pods -n ${APP_NAMESPACE} -o=json | jq -r '.items[] | select(.metadata.name | contains("'${POD_NAME}-'")) | .metadata.name' | xargs -I {} kubectl get pod {} -n ${APP_NAMESPACE} -o=json | jq '.status.containerStatuses[] | select(.state.waiting != null and (.state.waiting.reason | test("Error|CrashLoopBackOff|ErrImagePull|ImagePullBackOff|ErrImageNeverPull|CreateContainerConfigError|CreateContainerError"))) | {name: .name, namespace: "'${APP_NAMESPACE}'", reason: .state.waiting.reason}')
+  - echo "$POD_STATUS"
+  - echo "$POD_STATUS" > podstatus.json
+  - export POD_STATUS=$(grep 'reason:*' podstatus.json | tail -1 | awk '{print$2}' | sed 's/\"//g')
+  - echo $POD_STATUS
+  - if [ "$POD_STATUS" = "CrashLoopBackOff" ] || [ "$POD_STATUS" = "Error" ] || [ "$POD_STATUS" = "ErrImagePull" ] || [ "$POD_STATUS" = "ImagePullBackOff" ] || [ "$POD_STATUS" = "ErrImageNeverPull" ] || [ "$POD_STATUS" = "CreateContainerConfigError" ] || [ "$POD_STATUS" = "CreateContainerError" ]; then echo pod is not in Running state; exit 1; fi ;
+
+#Deploy Script Checks Before
+.deploy-script-checks-before-fe: &deploy-script-checks-before-fe
+  - ARGO_ROLLOUT_LIST_BEFORE=$(./kubectl-argo-rollouts-linux-amd64 list rollouts -n ${APP_NAMESPACE} 2>/dev/null|{ grep ${APP_NAME}-${CI_ENVIRONMENT_NAME} || true; }|wc -l) 
+  - >
+    if [ "${ARGO_ROLLOUT_LIST_BEFORE}" -eq 1 ]; then \
+      ./kubectl-argo-rollouts-linux-amd64 get rollout ${APP_NAME}-${CI_ENVIRONMENT_NAME} -n ${APP_NAMESPACE} ;
+    fi ;
+#Deploy Script Checks
+.deploy-script-checks-fe: &deploy-script-checks-fe
+  - ARGO_ROLLOUT_LIST=$(./kubectl-argo-rollouts-linux-amd64 list rollouts -n ${APP_NAMESPACE} 2>/dev/null|{ grep ${APP_NAME}-${CI_ENVIRONMENT_NAME} || true; }|wc -l) 
+  - echo "${ARGO_ROLLOUT_LIST}"
+  - >
+    if [ "${ARGO_ROLLOUT_LIST}" -eq 1 ]; then \
+      ARGO_ROLLOUT_COUNTER=0 ;
+      while [  "${ARGO_ROLLOUT_COUNTER}" -lt 10 ]; do \
+        ARGO_ROLLOUT_STATUS=$(./kubectl-argo-rollouts-linux-amd64 get rollout ${APP_NAME}-${CI_ENVIRONMENT_NAME} -n ${APP_NAMESPACE}|grep Status|{ grep Healthy || true; }|wc -l) ;
+        if [ "${ARGO_ROLLOUT_STATUS}" -eq 0 ]; then \
+          ./kubectl-argo-rollouts-linux-amd64 get rollout ${APP_NAME}-${CI_ENVIRONMENT_NAME} -n ${APP_NAMESPACE} ;
+          ARGO_ROLLOUT_COUNTER=$((ARGO_ROLLOUT_COUNTER+1)) ;
+          sleep 30 ;
+        else \
+          ./kubectl-argo-rollouts-linux-amd64 get rollout ${APP_NAME}-${CI_ENVIRONMENT_NAME} -n ${APP_NAMESPACE} ;
+          ARGO_ROLLOUT_COUNTER=100 ;
+        fi ;
+      done ;
+    fi ;
+
+
+.common-deploy-stg-prd-script: &common-deploy-stg-prd-script
+  - export IMAGE_NAME=${DOCKER_REGISTRY}:${APP_NAME}-${CI_COMMIT_SHORT_SHA}-${DOCKER_TAG}
+  - sed -i "s,IMAGE_VERSION,${IMAGE_NAME},g" frontend/manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml
+  - sed -i "s,MAX_REPLICAS,${MAX_REPLICAS},g" manifests/${CI_ENVIRONMENT_NAME}/hpa.yaml
+  - sed -i "s,MIN_REPLICAS,${MIN_REPLICAS},g" manifests/${CI_ENVIRONMENT_NAME}/hpa.yaml
+  - sed -i "s,MIN_REPLICAS,${MIN_REPLICAS},g" frontend/manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml
+  - sed -i "s,CPU_LIMIT,${CPU_LIMIT},g" frontend/manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml
+  - sed -i "s,MEMORY_LIMIT,${MEMORY_LIMIT},g" frontend/manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml
+  - sed -i "s,MEMORY_REQUEST,${MEMORY_REQUEST},g" frontend/manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml
+  - sed -i "s,CPU_REQUEST,${CPU_REQUEST},g" frontend/manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml
+  - kubectl apply -f frontend/manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml
+  - kubectl apply -f manifests/${CI_ENVIRONMENT_NAME}/service.yaml
+  - kubectl apply -f manifests/${CI_ENVIRONMENT_NAME}/hpa.yaml
+  - kubectl apply -f manifests/${CI_ENVIRONMENT_NAME}/ingress.yaml
+  - POD_NAME=$(yq eval '.spec.template.spec.containers[0].name' frontend/manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml)
+  - echo "$POD_NAME"
+  - sleep 30
+  - |
+    POD_STATUS=$(kubectl get pods -n ${APP_NAMESPACE} -o=json | jq -r '.items[] | select(.metadata.name | contains("'${POD_NAME}-'")) | .metadata.name' | xargs -I {} kubectl get pod {} -n ${APP_NAMESPACE} -o=json | jq '.status.containerStatuses[] | select(.state.waiting != null and (.state.waiting.reason | test("Error|CrashLoopBackOff|ErrImagePull|ImagePullBackOff|ErrImageNeverPull|CreateContainerConfigError|CreateContainerError"))) | {name: .name, namespace: "'${APP_NAMESPACE}'", reason: .state.waiting.reason}')
+  - echo "$POD_STATUS"
+  - echo "$POD_STATUS" > podstatus.json
+  - export POD_STATUS=$(grep 'reason:*' podstatus.json | tail -1 | awk '{print$2}' | sed 's/\"//g')
+  - echo $POD_STATUS
+  - if [ "$POD_STATUS" = "CrashLoopBackOff" ] || [ "$POD_STATUS" = "Error" ] || [ "$POD_STATUS" = "ErrImagePull" ] || [ "$POD_STATUS" = "ImagePullBackOff" ] || [ "$POD_STATUS" = "ErrImageNeverPull" ] || [ "$POD_STATUS" = "CreateContainerConfigError" ] || [ "$POD_STATUS" = "CreateContainerError" ]; then echo pod is not in Running state; exit 1; fi ;
+
+
+########################## FE  DEV ENVIRONMENT    ################################
+FE sonar scanning:
+  stage: fe-sonar-scanner
+  rules:
+  - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^lower-dev-sync\/.*$/'
+    when: never
+  - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^lower-qa-sync\/.*$/'
+    when: never
+  - if: >
+      $CI_PIPELINE_SOURCE != "web" &&
+      (
+        $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop" ||
+        $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "release" ||
+        $CI_COMMIT_BRANCH == "develop" ||
+        $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^release-.*$/ ||
+        $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^develop-.*$/
+      )
+    changes:
+      - frontend/**/*
+    when: always
+  - if: >
+      $CI_PIPELINE_SOURCE == "web" &&
+      ($JOB_NAME == "FE" || $JOB_NAME == "ALL") &&
+      $CI_COMMIT_BRANCH == "develop"
+    when: always
+  - when: never
+  image: 076614340621.dkr.ecr.us-east-1.amazonaws.com/lgcomus-base-sonar-scanner-cli-shared:sonar_cli5
+  variables:
+    GIT_DEPTH: 0 # avoid shallow clone to give sonar all the info it needs
+  script:
+    - cd ./frontend
+    - sonar-scanner -Dsonar.projectKey=$SONAR_JOB_NAME -Dsonar.exclusions=public/** -Dsonar.sources=. -Dsonar.projectVersion=${CI_COMMIT_SHORT_SHA} -Dsonar.qualitygate.wait=true -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
+
+DEV_Docker:
+  stage: fe-dev-docker-image
+  environment:
+    name: dev
+  rules:
+    - if: '($CI_PIPELINE_SOURCE != "web") && ($CI_COMMIT_BRANCH == "develop")'
+      changes:
+        - frontend/**/*
+    - if: '$CI_PIPELINE_SOURCE == "web" && ($JOB_NAME == "FE" || $JOB_NAME == "ALL") && ($CI_COMMIT_BRANCH == "develop")'
+      when: on_success
+    - when: never
+  image: 076614340621.dkr.ecr.us-east-1.amazonaws.com/lgcomus-base-node-shared:v20.18.3
+  script:
+    - sed -i "s,ENV,${CI_ENVIRONMENT_NAME},g" ./frontend/nginx.conf
+    - *node-script
+    - *before-docker-image-script
+    - *docker-script
+
+DEV_Deploy:
+  stage: fe-dev-deploy
+  environment:
+    name: dev
+  rules:
+    - if: '($CI_PIPELINE_SOURCE != "web") && ($CI_COMMIT_BRANCH == "develop")'
+      changes:
+        - frontend/**/*
+    - if: '$CI_PIPELINE_SOURCE == "web" && ($JOB_NAME == "FE" || $JOB_NAME == "ALL") && ($CI_COMMIT_BRANCH == "develop")'
+      when: on_success
+    - when: never
+  needs: [DEV_Docker]
+  image: 076614340621.dkr.ecr.us-east-1.amazonaws.com/lgcomus-base-helm-shared:latest-mfe
+  script:
+    - *deploy-script
+    - *common-deploy-script
+  allow_failure: false
+
+########################## FE  QA ENVIRONMENT    ################################
+QA_Docker:
+  stage: fe-qa-docker-image
+  environment:
+    name: qa
+  rules:
+    - if: '($CI_PIPELINE_SOURCE != "web") && ($CI_COMMIT_BRANCH == "release" || $CI_COMMIT_BRANCH == "hotfix/qa-production")'
+      changes:
+        - frontend/**/*
+    - if: '$CI_PIPELINE_SOURCE == "web" && ($JOB_NAME == "FE" || $JOB_NAME == "ALL") && ($CI_COMMIT_BRANCH == "release" || $CI_COMMIT_BRANCH == "hotfix/qa-production")'
+      when: on_success
+    - when: never
+  image: 076614340621.dkr.ecr.us-east-1.amazonaws.com/lgcomus-base-node-shared:v20.18.3
+  script:
+    - sed -i "s,ENV,${CI_ENVIRONMENT_NAME},g" ./frontend/nginx.conf
+    - *node-script
+    - *before-docker-image-script
+    - *docker-script
+
+QA_Deploy:
+  stage: fe-qa-deploy
+  environment:
+    name: qa
+  rules:
+    - if: '($CI_PIPELINE_SOURCE != "web") && ($CI_COMMIT_BRANCH == "release" || $CI_COMMIT_BRANCH == "hotfix/qa-production")'
+      changes:
+        - frontend/**/*
+    - if: '$CI_PIPELINE_SOURCE == "web" && ($JOB_NAME == "FE" || $JOB_NAME == "ALL") && ($CI_COMMIT_BRANCH == "release" || $CI_COMMIT_BRANCH == "hotfix/qa-production")'
+      when: on_success
+    - when: never
+  needs: [QA_Docker]
+  image: 076614340621.dkr.ecr.us-east-1.amazonaws.com/lgcomus-base-helm-shared:latest-mfe
+  script:
+    - *deploy-script
+    - *common-deploy-script
+  allow_failure: false
+
+########################## FE STG ENVIRONMENT    ################################
+STG_Docker:
+  stage: fe-stg-docker-image
+  environment:
+    name: stg
+  rules:
+    - if: '($CI_PIPELINE_SOURCE != "web") && ($CI_COMMIT_BRANCH == "release" || $CI_COMMIT_BRANCH == "hotfix/stg-production")'
+      changes:
+        - frontend/**/*
+    - if: '$CI_PIPELINE_SOURCE == "web" && ($JOB_NAME == "FE" || $JOB_NAME == "ALL") && ($CI_COMMIT_BRANCH == "release" || $CI_COMMIT_BRANCH == "hotfix/stg-production")'
+      when: on_success
+    - when: never
+  when: manual
+  image: 076614340621.dkr.ecr.us-east-1.amazonaws.com/lgcomus-base-node-shared:v20.18.3
+  needs: [Main_Branch_Commit]
+  script:
+    - sed -i "s,ENV,${CI_ENVIRONMENT_NAME},g" ./frontend/nginx.conf
+    - *node-script
+    - *before-docker-image-script
+    - *docker-script
+
+STG_Deploy:
+  stage: fe-stg-deploy
+  environment:
+    name: stg
+  rules:
+    - if: '($CI_PIPELINE_SOURCE != "web") && ($CI_COMMIT_BRANCH == "release" || $CI_COMMIT_BRANCH == "hotfix/stg-production")'
+      changes:
+        - frontend/**/*
+    - if: '$CI_PIPELINE_SOURCE == "web" && ($JOB_NAME == "FE" || $JOB_NAME == "ALL") && ($CI_COMMIT_BRANCH == "release" || $CI_COMMIT_BRANCH == "hotfix/stg-production")'
+      when: on_success
+    - when: never
+  when: manual
+  needs: [STG_Docker]
+  image: 076614340621.dkr.ecr.us-east-1.amazonaws.com/lgcomus-base-helm-shared:latest-mfe
+  script:
+    - *deploy-script-stg-prd
+    - *deploy-script-checks-before-fe
+    - *common-deploy-stg-prd-script
+    - *deploy-script-checks-fe
+  allow_failure: false
+
+########################## FE PRD ENVIRONMENT    ################################
+PRD_Docker:
+  stage: fe-prd-docker-image
+  environment:
+    name: prd
+  rules:
+    - if: '($CI_PIPELINE_SOURCE != "web") && ($CI_COMMIT_BRANCH == "release" || $CI_COMMIT_BRANCH == "hotfix/stg-production" || $CI_COMMIT_BRANCH == "hotfix/qa-production" || $CI_COMMIT_BRANCH == "hotfix/production")'
+      changes:
+        - frontend/**/*
+    - if: '$CI_PIPELINE_SOURCE == "web" && ($JOB_NAME == "FE" || $JOB_NAME == "ALL") && ($CI_COMMIT_BRANCH == "release" || $CI_COMMIT_BRANCH == "hotfix/stg-production" || $CI_COMMIT_BRANCH == "hotfix/qa-production" || $CI_COMMIT_BRANCH == "hotfix/production")'
+      when: on_success
+    - when: never
+  when: manual
+  image: 076614340621.dkr.ecr.us-east-1.amazonaws.com/lgcomus-base-node-shared:v20.18.3
+  needs: [Main_Branch_Commit_Prod]
+  script:
+    - sed -i "s,ENV,${CI_ENVIRONMENT_NAME},g" ./frontend/nginx.conf
+    - *node-script
+    - *before-docker-image-script
+    - *docker-script
+
+PRD_Deploy:
+  stage: fe-prd-deploy
+  environment:
+    name: prd
+  rules:
+    - if: '($CI_PIPELINE_SOURCE != "web") && ($CI_COMMIT_BRANCH == "release" || $CI_COMMIT_BRANCH == "hotfix/stg-production" || $CI_COMMIT_BRANCH == "hotfix/qa-production" || $CI_COMMIT_BRANCH == "hotfix/production")'
+      changes:
+        - frontend/**/*
+    - if: '$CI_PIPELINE_SOURCE == "web" && ($JOB_NAME == "FE" || $JOB_NAME == "ALL") && ($CI_COMMIT_BRANCH == "release" || $CI_COMMIT_BRANCH == "hotfix/stg-production" || $CI_COMMIT_BRANCH == "hotfix/qa-production" || $CI_COMMIT_BRANCH == "hotfix/production")'
+      when: on_success
+    - when: never
+  needs: [PRD_Docker]
+  image: 076614340621.dkr.ecr.us-east-1.amazonaws.com/lgcomus-base-helm-shared:latest-mfe
+  when: manual
+  script:
+    - *deploy-script-stg-prd
+    - *deploy-script-checks-before-fe
+    - *common-deploy-stg-prd-script
+    - *deploy-script-checks-fe
+  allow_failure: false
+
+QA Approval:
+  stage: qa-approval
+  rules:
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^lower-qa-sync\//'
+      when: never 
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "release" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^release-.*/'
+      when: manual
+    - when: never
+  when: manual
+  script:
+    - apk add bash git
+    - apk add --no-cache curl jq python3 py3-pip
+    - pip3 install awscli
+    - export AWS_PROFILE=lgcomus-shared
+    - aws s3 ls 
+    - export GITLAB_TOKEN=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-GITLAB-TOKEN --region us-east-1 --query SecretString --output text | jq '.GITLAB_PRIVATE_TOKEN'|sed 's/"//g')
+    - env
+    - |
+      STATUS=$(curl -s -o /dev/null -w "%{http_code}" --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "https://gitlab-ce.lgcomus-shared.lge.com/api/v4/groups/795/members/all/$GITLAB_USER_ID")
+      echo "STATUS: $STATUS"
+      if [ "$STATUS" -eq 200 ]; then
+        echo "User is a member of the QA group"
+        ############# Auto Merge #######################
+        echo "Merging MR ID: $CI_MERGE_REQUEST_IID for project: $CI_PROJECT_ID ..."
+        curl --request PUT "https://gitlab-ce.lgcomus-shared.lge.com/api/v4/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/merge" \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --header "Content-Type: application/json" \
+        --data '{
+           "merge_when_pipeline_succeeds": true
+        }'
+
+        #echo "Merge Response: $MERGE_RESPONSE"
+        echo "MR merged successfully if no error above."
+      else
+        echo "User is not a member of the QA group"
+        exit 1
+      fi
+  allow_failure: false

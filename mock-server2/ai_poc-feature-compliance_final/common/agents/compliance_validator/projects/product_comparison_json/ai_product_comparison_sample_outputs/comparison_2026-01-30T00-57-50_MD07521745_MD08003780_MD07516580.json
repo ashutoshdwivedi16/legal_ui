@@ -1,0 +1,106 @@
+{
+  "summary": {
+    "quickPick": [
+      {
+        "productId": "ADFD5448AT",
+        "productName": "Front Control Smart Wi-Fi Enabled Dishwasher with QuadWash™",
+        "useCases": "you prioritize high-capacity cleaning with precise control, need advanced smart features for remote monitoring, or value quiet operation at 48 dBA"
+      },
+      {
+        "productId": "LDFN4542S",
+        "productName": "24 Inch Wide QuadWash™ Front Control Dishwasher - Stainless Steel",
+        "useCases": "you need a compact 24-inch wide dishwasher with robust QuadWash performance, prioritize energy efficiency, or seek a fingerprint-resistant finish"
+      },
+      {
+        "productId": "LDFC2423V",
+        "productName": "Front Control Dishwasher with LoDecibel Operation and Dynamic Dry™",
+        "useCases": "you prefer a balance of quiet operation at 52 dBA, Dynamic Dry technology, and a more affordable price point without QuadWash"
+      }
+    ],
+    "differentiators": [
+      {
+        "key": "capacity_and_place_settings",
+        "label": "Capacity",
+        "products": [
+          {
+            "productId": "ADFD5448AT",
+            "summary": "14 place settings with upper rack dish height limit of 10.625 inches and lower rack limit of 12.5 inches. Suitable for larger households."
+          },
+          {
+            "productId": "LDFN4542S",
+            "summary": "15 place settings with upper rack dish height limit of 7.1 inches and lower rack limit of 12.5 inches. Ideal for compact spaces."
+          },
+          {
+            "productId": "LDFC2423V",
+            "summary": "15 place settings with upper rack dish height limit of 11.25 inches and lower rack limit of 12.5 inches. Matches LDFN4542S on capacity."
+          }
+        ]
+      },
+      {
+        "key": "quiet_operation",
+        "label": "Noise Level",
+        "products": [
+          {
+            "productId": "ADFD5448AT",
+            "summary": "48 dBA LoDecibel quiet operation. One of the quietest dishwashers available."
+          },
+          {
+            "productId": "LDFN4542S",
+            "summary": "48 dBA LoDecibel quiet operation. Comparable to ADFD5448AT."
+          },
+          {
+            "productId": "LDFC2423V",
+            "summary": "52 dBA LoDecibel operation. Slightly louder than the other two models."
+          }
+        ]
+      },
+      {
+        "key": "number_of_wash_cycles",
+        "label": "Wash Cycles",
+        "products": [
+          {
+            "productId": "ADFD5448AT",
+            "summary": "9 wash cycles including Auto, Heavy, Delicate, and more. Offers a wide range of cleaning options."
+          },
+          {
+            "productId": "LDFN4542S",
+            "summary": "9 wash cycles with options like Auto, Heavy, Delicate, and Turbo. Similar to ADFD5448AT."
+          },
+          {
+            "productId": "LDFC2423V",
+            "summary": "4 wash cycles (Auto, Heavy, Normal, Turbo). Fewer cycles but still effective."
+          }
+        ]
+      },
+      {
+        "key": "smart_features",
+        "label": "Smart Technology",
+        "products": [
+          {
+            "productId": "ADFD5448AT",
+            "summary": "Wi-Fi enabled with ThinQ smart technology and SmartDiagnosis. Offers comprehensive smart features."
+          },
+          {
+            "productId": "LDFN4542S",
+            "summary": "No Wi-Fi enabled but has SmartDiagnosis and NFC Tag On. Limited smart features."
+          },
+          {
+            "productId": "LDFC2423V",
+            "summary": "No smart features like Wi-Fi or remote monitoring. Basic functionality."
+          }
+        ]
+      }
+    ],
+    "similarities": [
+      "All three dishwashers have NeveRust™ Stainless Steel tub material for durability.",
+      "Each model features QuadWash technology for thorough cleaning.",
+      "All have LoDecibel quiet operation for reduced noise.",
+      "ENERGY STAR qualified with similar energy use (258-238 kWh/Year).",
+      "All include detergent and rinse-aid dispensers for convenience."
+    ],
+    "confidence": "high"
+  },
+  "cached": false,
+  "fallback": false,
+  "reason": null
+}

@@ -1,0 +1,86 @@
+{
+  "summary": {
+    "quickPick": [
+      {
+        "productId": "34GS95QE-B",
+        "productName": "34 Inch UltraGear™ OLED WQHD 1440P 240Hz 0.03ms G-Sync Compatible 800R Curved Gaming Monitor",
+        "useCases": "your room has limited space, you prefer a curved screen for immersive gaming, or you prioritize fast response times for competitive play"
+      },
+      {
+        "productId": "27GX790B-B",
+        "productName": "27 Inch UltraGear™ OLED Dual Mode QHD 540Hz or HD 720Hz 0.02ms G-Sync® Compatible DisplayPort 2.1 Gaming Monitor",
+        "useCases": "you mainly game at high refresh rates, you prefer a flat screen for esports, or you want the flexibility of dual-mode resolutions"
+      }
+    ],
+    "differentiators": [
+      {
+        "key": "refresh_rate",
+        "label": "Refresh Rate",
+        "products": [
+          {
+            "productId": "34GS95QE-B",
+            "summary": "Offers a 240Hz refresh rate, suitable for smooth gaming experiences. Ideal for fast-paced games where lower latency matters."
+          },
+          {
+            "productId": "27GX790B-B",
+            "summary": "Features a higher 540Hz refresh rate for extreme gaming performance. Supports resolutions up to QHD at 540Hz or HD at 720Hz."
+          }
+        ]
+      },
+      {
+        "key": "screen_size",
+        "label": "Screen Size",
+        "products": [
+          {
+            "productId": "34GS95QE-B",
+            "summary": "Has a larger 33.9-inch screen with a 21:9 aspect ratio. Provides an ultra-wide field of view for cinematic experiences."
+          },
+          {
+            "productId": "27GX790B-B",
+            "summary": "Features a compact 26.5-inch screen with a 16:9 aspect ratio. Suitable for desktop use or space-constrained environments."
+          }
+        ]
+      },
+      {
+        "key": "response_time",
+        "label": "Response Time",
+        "products": [
+          {
+            "productId": "34GS95QE-B",
+            "summary": "Boasts a 0.03ms GtG response time. Minimizes ghosting for fast-paced content."
+          },
+          {
+            "productId": "27GX790B-B",
+            "summary": "Offers an even faster 0.02ms GtG response time. Ideal for competitive gaming where every millisecond counts."
+          }
+        ]
+      },
+      {
+        "key": "brightness",
+        "label": "Brightness",
+        "products": [
+          {
+            "productId": "34GS95QE-B",
+            "summary": "Reaches a typical brightness of 275 cd/m². Suitable for most indoor gaming environments."
+          },
+          {
+            "productId": "27GX790B-B",
+            "summary": "Achieves a higher typical brightness of 335 cd/m². Performs better in brighter rooms or under various lighting conditions."
+          }
+        ]
+      }
+    ],
+    "similarities": [
+      "Both use OLED display technology for true blacks and vibrant colors.",
+      "Both support NVIDIA G-Sync™ Compatible for smooth gaming performance.",
+      "Both include RGB LED lighting for ambient effects.",
+      "Both have multiple HDMI and DisplayPort inputs for versatile connectivity.",
+      "Both support HDR10 for enhanced content compatibility."
+    ],
+    "confidence": "high"
+  },
+  "cached": false,
+  "fallback": false,
+  "reason": null,
+  "raw_llm_response": null
+}

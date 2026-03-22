@@ -1,0 +1,21 @@
+model_list:
+  - model_name: groq/llama-3.3-70b-versatile
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: "os.environ/GROQ_API_KEY"
+
+  # Also expose as a generic name so any "llm_model" value works
+  - model_name: groq-default
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: "os.environ/GROQ_API_KEY"
+
+general_settings:
+  # Note: LiteLLM UI login requires PostgreSQL. For local dev without Postgres,
+  # the proxy runs open (no auth) — use the API directly at http://localhost:9999
+  drop_params: true                   # silently drop unsupported params
+
+litellm_settings:
+  telemetry: false                    # disable anonymous telemetry
+  success_callback: []
+  failure_callback: []

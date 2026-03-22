@@ -1,0 +1,1 @@
+"""Coveo monitoring agent."""

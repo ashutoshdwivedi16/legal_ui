@@ -11,7 +11,7 @@ const badgeColor = {
   MEDIUM: "bg-orange-400 text-white",
 };
 
-const FailureDrillDown: React.FC<{ jobId: string; onClose: () => void }> = ({ jobId, onClose }) => {
+const FailureDrillDown: React.FC<{ jobId: string; onClose: () => void; onIgnoreSuccess?: () => void }> = ({ jobId, onClose, onIgnoreSuccess }) => {
   const [failures, setFailures] = useState<any[]>([]);
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -19,6 +19,7 @@ const FailureDrillDown: React.FC<{ jobId: string; onClose: () => void }> = ({ jo
   const [scrollWidth, setScrollWidth] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
   const [ignoringIds, setIgnoringIds] = useState<Record<string | number, boolean>>({});
+  const ignoredCountRef = useRef(0);
 
   useEffect(() => {
     (async () => {
@@ -35,14 +36,12 @@ const FailureDrillDown: React.FC<{ jobId: string; onClose: () => void }> = ({ jo
         ignore_reasoning: true,
         ignored_fields: ["llm_reasoning", "failed_rules"],
       });
-      setFailures((prev) =>
-        prev.map((item) =>
-          item.id === auditId ? { ...item, status: "IGNORED" } : item
-        )
-      );
+      ignoredCountRef.current += 1;
+      setFailures((prev) => prev.filter((item) => item.id !== auditId));
+      onIgnoreSuccess?.();
     } catch (error) {
       console.error("Failed to ignore reasoning:", error);
-    } finally {
+      // Only re-enable the button on failure — on success the row is removed
       setIgnoringIds((prev) => ({ ...prev, [auditId]: false }));
     }
   };
@@ -68,6 +67,13 @@ const FailureDrillDown: React.FC<{ jobId: string; onClose: () => void }> = ({ jo
     } else {
       topScrollRef.current.scrollLeft = scrollRef.current.scrollLeft;
     }
+  };
+
+  const handleClose = () => {
+    if (ignoredCountRef.current > 0) {
+      onIgnoreSuccess?.();
+    }
+    onClose();
   };
 
   const handleExportCSV = () => {
@@ -113,7 +119,7 @@ const FailureDrillDown: React.FC<{ jobId: string; onClose: () => void }> = ({ jo
             <div className="w-px h-8 bg-border mx-1" />
             <button
               className="rounded-full p-2 hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
-              onClick={ onClose }
+              onClick={ handleClose }
               aria-label="Close"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -159,7 +165,7 @@ const FailureDrillDown: React.FC<{ jobId: string; onClose: () => void }> = ({ jo
                 failures.map((item, idx) => (
                   <TableRow
                     key={ item.id || idx }
-                    className={ `align-top border-b transition-colors hover:bg-muted/30 ${idx % 2 === 0 ? "bg-white" : "bg-gray-100"}` }
+                    className={ `align-top border-b transition-colors ${ignoringIds[item.id] ? "bg-muted/50 opacity-60" : idx % 2 === 0 ? "bg-white hover:bg-muted/30" : "bg-gray-100 hover:bg-muted/30"}` }
                   >
                     <TableCell className="text-sm py-2 px-3 whitespace-nowrap font-mono font-medium text-muted-foreground border-r">
                       {item.id}
@@ -201,13 +207,21 @@ const FailureDrillDown: React.FC<{ jobId: string; onClose: () => void }> = ({ jo
                     </TableCell>
                     <TableCell className="py-2 px-3 text-center">
                       <button
-                        className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs font-bold text-muted-foreground hover:text-foreground hover:bg-muted"
+                        className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs font-bold transition-colors ${ignoringIds[item.id] ? "bg-amber-100 text-amber-700 border-amber-300 cursor-not-allowed" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}
                         onClick={() => handleIgnoreReasoning(item.id)}
                         disabled={ignoringIds[item.id]}
                         title="Ignore reasoning and failed rules"
                       >
-                        {item.status === "IGNORED" ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                        {item.status === "IGNORED" ? "Ignored" : "Ignore"}
+                        {ignoringIds[item.id] ? (
+                          <>
+                            <span className="h-3 w-3 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
+                            Ignoring...
+                          </>
+                        ) : item.status === "IGNORED" ? (
+                          <><EyeOff className="h-3 w-3" />Ignored</>
+                        ) : (
+                          <><Eye className="h-3 w-3" />Ignore</>
+                        )}
                       </button>
                     </TableCell>
                   </TableRow>

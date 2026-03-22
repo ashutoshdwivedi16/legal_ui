@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-services-dev
+  namespace: ai-service
+  labels:
+    app.kubernetes.io/instance: ai-services-dev
+    app.kubernetes.io/name: ai-services-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: ai-services-dev
+      app.kubernetes.io/name: ai-services-dev
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: ai-services-dev
+        app.kubernetes.io/name: ai-services-dev
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values:
+                      - ai-services-dev
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: ai-services-dev
+          image: IMAGE_VERSION
+          ports:
+          - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: ai-services-secret-dev

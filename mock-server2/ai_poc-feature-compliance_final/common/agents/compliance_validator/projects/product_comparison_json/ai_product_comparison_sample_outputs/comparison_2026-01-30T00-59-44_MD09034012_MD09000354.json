@@ -1,0 +1,84 @@
+{
+  "summary": {
+    "quickPick": [
+      {
+        "productId": "LSGL5830S",
+        "productName": "5.8 cu. ft. Gas Slide-in Range with EasyClean®",
+        "useCases": "you prioritize a compact design, mainly cook for small households, or want a more budget-friendly gas range with essential features"
+      },
+      {
+        "productId": "LSGL6337X",
+        "productName": "6.3 cu ft. Smart Gas Slide-In Range with InstaView®, ProBake Convection®, and Air Fry",
+        "useCases": "you frequently cook for large groups, want advanced smart features, or need a spacious oven with multiple cooking options"
+      }
+    ],
+    "differentiators": [
+      {
+        "key": "oven_capacity",
+        "label": "Oven Capacity",
+        "products": [
+          {
+            "productId": "LSGL5830S",
+            "summary": "5.8 cu. ft. oven capacity, suitable for small to medium-sized households with basic cooking needs"
+          },
+          {
+            "productId": "LSGL6337X",
+            "summary": "6.3 cu. ft. oven capacity, ideal for larger families or those who often cook in bulk"
+          }
+        ]
+      },
+      {
+        "key": "cooktop_burners",
+        "label": "Cooktop Burners",
+        "products": [
+          {
+            "productId": "LSGL5830S",
+            "summary": "4 burners, providing sufficient power for most everyday cooking tasks"
+          },
+          {
+            "productId": "LSGL6337X",
+            "summary": "5 burners, including a high-power 22,000 BTU UltraHeat™ burner for rapid heating and more versatile cooking options"
+          }
+        ]
+      },
+      {
+        "key": "smart_features",
+        "label": "Smart Technology",
+        "products": [
+          {
+            "productId": "LSGL5830S",
+            "summary": "No ThinQ® Smart Technology, no smart features available"
+          },
+          {
+            "productId": "LSGL6337X",
+            "summary": "Includes ThinQ® Smart Technology with features like SmartDiagnosis™, voice control, and a mobile app for remote operation and monitoring"
+          }
+        ]
+      },
+      {
+        "key": "oven_features",
+        "label": "Oven Modes and Cleaning",
+        "products": [
+          {
+            "productId": "LSGL5830S",
+            "summary": "Offers basic oven modes like Bake, Broil, and EasyClean®, but no self-cleaning feature"
+          },
+          {
+            "productId": "LSGL6337X",
+            "summary": "Includes multiple oven modes (Bake, Convection Bake, Air Fry, Self Clean) and ProBake Convection® for even cooking"
+          }
+        ]
+      }
+    ],
+    "similarities": [
+      "Both are gas slide-in ranges with sealed cooktops and offer Sabbath Mode",
+      "Both have a 1-year parts and labor warranty",
+      "Both support English language settings and Fahrenheit temperature units",
+      "Both have a similar overall design with stainless steel appearance and knobs"
+    ],
+    "confidence": "high"
+  },
+  "cached": false,
+  "fallback": false,
+  "reason": null
+}

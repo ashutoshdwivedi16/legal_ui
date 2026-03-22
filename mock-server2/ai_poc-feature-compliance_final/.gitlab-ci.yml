@@ -1,0 +1,251 @@
+image: 076614340621.dkr.ecr.us-east-1.amazonaws.com/lgcomus-base-docker-shared:latest
+
+.deploy-script-before: &deploy-script-before
+    - apk add --no-cache yq coreutils
+    - curl -LO https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64
+    - chmod +x ./kubectl-argo-rollouts-linux-amd64
+    - export EKS_CLUSTER_NAME=$(eval echo \${EKS_CLUSTER_NAME_$CI_ENVIRONMENT_NAME})
+    - aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION}
+    - |
+      DOCKER_REGISTRY_SHARED="$DOCKER_REGISTRY_SHARED"
+
+.common-before-docker-image-script: &common-before-docker-image-script
+  - docker info
+  - apk add --no-cache zip
+  - apk add --no-cache curl jq python3 py3-pip
+  - pip3 install awscli
+  - export AWS_PROFILE=lgcomus-shared
+  - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 076614340621.dkr.ecr.us-east-1.amazonaws.com
+.common-docker-image-script: &common-docker-image-script
+  - echo ${DOCKER_REGISTRY_SHARED}:${APP_NAME}-${CI_COMMIT_SHORT_SHA}-${DOCKER_TAG}
+  - export IMAGE_NAME=${DOCKER_REGISTRY_SHARED}:${APP_NAME}-${CI_COMMIT_SHORT_SHA}-${DOCKER_TAG}
+  - echo ${IMAGE_NAME}
+  - docker build -t ${IMAGE_NAME} .
+  - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $DOCKER_REGISTRY_SHARED
+  - docker tag ${IMAGE_NAME} ${IMAGE_NAME}
+  - docker push ${IMAGE_NAME}
+
+.dcoker-image-scanning-script: &dcoker-image-scanning-script
+  - aws ecr start-image-scan --repository-name ${ECR_REPO_NAME_SHARED} --image-id imageTag=${APP_NAME}-${CI_COMMIT_SHORT_SHA}-${DOCKER_TAG} --region $AWS_DEFAULT_REGION
+  - aws ecr wait image-scan-complete --repository-name ${ECR_REPO_NAME_SHARED} --image-id imageTag=${APP_NAME}-${CI_COMMIT_SHORT_SHA}-${DOCKER_TAG} --cli-read-timeout 300 --cli-connect-timeout 300
+  - aws ecr describe-image-scan-findings --repository-name ${ECR_REPO_NAME_SHARED} --image-id imageTag=${APP_NAME}-${CI_COMMIT_SHORT_SHA}-${DOCKER_TAG} --region $AWS_DEFAULT_REGION > scanfindings
+  - export VAR_HIGH=$(grep 'HIGH:*' scanfindings | tail -1 | awk '{print$2}' | sed -e 's/,/ /g')
+  ##### We will change the value 1 to 0 for VAR_HIGH when java 21 will enable in all projects####
+  - if [ $VAR_HIGH -gt 1 ]; then HIGH=$VAR_HIGH; fi
+  - export HIGH_IMAGESCAN_VALUE=$HIGH
+  - if [ "$HIGH_IMAGESCAN_VALUE" -ge "$IMAGE_SCAN_MIN_HIGH_PASS_VALUE" ]; then echo ${IMAGESCANFAILMESSAGE} SACN VALUE IS ${HIGH_IMAGESCAN_VALUE}; exit 1; fi ;
+  ##CRITICAL Vunlarablity Scan
+  - export VAR_CRITICAL=$(grep 'CRITICAL:*' scanfindings | tail -1 | awk '{print$2}' | sed -e 's/,/ /g')
+  #- echo $VAR_CRITICAL
+  #- cat scanfindings
+  - if [ $VAR_CRITICAL -gt 0 ]; then CRITICAL=$VAR_CRITICAL; fi
+  - export CRITICAL_IMAGESCAN_VALUE=$CRITICAL
+  - if [ "$CRITICAL_IMAGESCAN_VALUE" -ge "$IMAGE_SCAN_MIN_CRITICAL_PASS_VALUE" ]; then echo ${IMAGESCANFAILMESSAGE} SACN VALUE IS ${CRITICAL_IMAGESCAN_VALUE}; exit 1; fi ; 
+
+.deploy-script: &deploy-script
+  - export AWS_PROFILE=lgcomus-${CI_ENVIRONMENT_NAME}
+  - export EKS_CLUSTER_NAME=$(eval echo \${EKS_CLUSTER_NAME_$CI_ENVIRONMENT_NAME})
+  - aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION}
+
+.fetch-secret-manager-script: &fetch-secret-manager-script
+  - export PDS_DB_HOST=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.pds_host' | sed 's/"//g')
+  - export PDS_DB_PORT=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.pds_port' | sed 's/"//g')
+  - export PDS_DB_USER=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.pds_username' | sed 's/"//g')
+  - export PDS_DB_PASSWORD=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.pds_password' | sed 's/"//g')
+  - export PDS_DB_NAME=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.pds_db_name' | sed 's/"//g')
+  - export AI_DB_HOST=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.ai_db_host' | sed 's/"//g')
+  - export AI_DB_PORT=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.ai_db_port' | sed 's/"//g')
+  - export AI_DB_USER=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.ai_db_username' | sed 's/"//g')
+  - export AI_DB_PASSWORD=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.ai_db_password' | sed 's/"//g')
+  - export AI_DB_NAME=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.ai_db_name' | sed 's/"//g')
+  - export REDIS_HOST=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.redis_host' | sed 's/"//g')
+  - export REDIS_PORT=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.redis_port' | sed 's/"//g')
+  - export REDIS_DB=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.redis_db' | sed 's/"//g')
+  - export LITELLM_BASE_URL=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.litellm_base_url' | sed 's/"//g')
+  - export LITELLM_API_KEY=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.litellm_api_key' | sed 's/"//g')
+  - export LLM_MODEL=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.llm_model' | sed 's/"//g')
+  - export GUARDRAILS_API_KEY=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.guardrails_api_key' | sed 's/"//g')
+  - export SEC_AIC_DB_HOST=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.sec_aic_db_host' | sed 's/"//g')
+  - export SEC_AIC_DB_PORT=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.sec_aic_db_port' | sed 's/"//g')
+  - export SEC_AIC_DB_USER=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.sec_aic_db_username' | sed 's/"//g')
+  - export SEC_AIC_DB_PASSWORD=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.sec_aic_db_password' | sed 's/"//g')
+  - export SEC_AIC_DB_NAME=$(aws secretsmanager get-secret-value --secret-id SECRET-LGCOMUS-${ENV}-AI-SERVICE-PRODUCT-COMPARISION-01 --region us-east-1 --query SecretString --output text | jq '.sec_aic_db_name' | sed 's/"//g')
+
+.secret-manager-replace-script: &secret-manager-replace-script
+  - sed -i "s,ENV_PDS_DB_HOST,${PDS_DB_HOST},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_PDS_DB_PORT,${PDS_DB_PORT},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_PDS_DB_USER,${PDS_DB_USER},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_PDS_DB_PASSWORD,${PDS_DB_PASSWORD},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_PDS_DB_NAME,${PDS_DB_NAME},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_AI_DB_HOST,${AI_DB_HOST},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_AI_DB_PORT,${AI_DB_PORT},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_AI_DB_USER,${AI_DB_USER},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_AI_DB_PASSWORD,${AI_DB_PASSWORD},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_AI_DB_NAME,${AI_DB_NAME},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_REDIS_HOST,${REDIS_HOST},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_REDIS_PORT,${REDIS_PORT},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_REDIS_DB,${REDIS_DB},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_LITELLM_BASE_URL,${LITELLM_BASE_URL},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_LITELLM_API_KEY,${LITELLM_API_KEY},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_GUARDRAILS_API_KEY,${GUARDRAILS_API_KEY},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_LLM_MODEL,${LLM_MODEL},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_SEC_AIC_DB_HOST,${SEC_AIC_DB_HOST},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_SEC_AIC_DB_PORT,${SEC_AIC_DB_PORT},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_SEC_AIC_DB_USER,${SEC_AIC_DB_USER},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_SEC_AIC_DB_PASSWORD,${SEC_AIC_DB_PASSWORD},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - sed -i "s,ENV_SEC_AIC_DB_NAME,${SEC_AIC_DB_NAME},g" manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+
+.common-deploy-script: &common-deploy-script
+  - export IMAGE_NAME=${DOCKER_REGISTRY_SHARED}:${APP_NAME}-${CI_COMMIT_SHORT_SHA}-${DOCKER_TAG}
+  - sed -i "s,IMAGE_VERSION,${IMAGE_NAME},g" manifests/${CI_ENVIRONMENT_NAME}/deployment.yaml
+  - kubectl apply -f manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - kubectl apply -f manifests/${CI_ENVIRONMENT_NAME}/deployment.yaml
+  - kubectl apply -f manifests/${CI_ENVIRONMENT_NAME}/service.yaml
+  - kubectl apply -f manifests/${CI_ENVIRONMENT_NAME}/ingress.yaml
+  - POD_NAME=$(yq eval '.spec.template.spec.containers[0].name' manifests/${CI_ENVIRONMENT_NAME}/deployment.yaml)
+  - echo "$POD_NAME"
+  - sleep 30
+  - |
+    POD_STATUS=$(kubectl get pods -n ${APP_NAMESPACE} -o=json | jq -r '.items[] | select(.metadata.name | contains("'${POD_NAME}-'")) | .metadata.name' | xargs -I {} kubectl get pod {} -n ${APP_NAMESPACE} -o=json | jq '.status.containerStatuses[] | select(.state.waiting != null and (.state.waiting.reason | test("Error|CrashLoopBackOff|ErrImagePull|ImagePullBackOff|ErrImageNeverPull|CreateContainerConfigError|CreateContainerError"))) | {name: .name, namespace: "'${APP_NAMESPACE}'", reason: .state.waiting.reason}')
+  - echo "$POD_STATUS"
+  - echo "$POD_STATUS" > podstatus.json
+  - export POD_STATUS=$(grep 'reason:*' podstatus.json | tail -1 | awk '{print$2}' | sed 's/\"//g')
+  - echo $POD_STATUS
+  - if [ "$POD_STATUS" = "CrashLoopBackOff" ] || [ "$POD_STATUS" = "Error" ] || [ "$POD_STATUS" = "ErrImagePull" ] || [ "$POD_STATUS" = "ImagePullBackOff" ] || [ "$POD_STATUS" = "ErrImageNeverPull" ] || [ "$POD_STATUS" = "CreateContainerConfigError" ] || [ "$POD_STATUS" = "CreateContainerError" ]; then echo pod is not in Running state; exit 1; fi ;
+
+.common-deploy-stg-prd-script: &common-deploy-stg-prd-script
+  - export IMAGE_NAME=${DOCKER_REGISTRY}:${APP_NAME}-${CI_COMMIT_SHORT_SHA}-${DOCKER_TAG}
+  - sed -i "s,IMAGE_VERSION,${IMAGE_NAME},g" manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml
+  - sed -i "s,MAX_REPLICAS,${MAX_REPLICAS},g" manifests/${CI_ENVIRONMENT_NAME}/hpa.yaml
+  - sed -i "s,MIN_REPLICAS,${MIN_REPLICAS},g" manifests/${CI_ENVIRONMENT_NAME}/hpa.yaml
+  - sed -i "s,MIN_REPLICAS,${MIN_REPLICAS},g" manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml
+  - sed -i "s,CPU_LIMIT,${CPU_LIMIT},g" manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml
+  - sed -i "s,MEMORY_LIMIT,${MEMORY_LIMIT},g" manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml
+  - sed -i "s,MEMORY_REQUEST,${MEMORY_REQUEST},g" manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml
+  - sed -i "s,CPU_REQUEST,${CPU_REQUEST},g" manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml
+  - kubectl apply -f manifests/${CI_ENVIRONMENT_NAME}/secret.yaml
+  - kubectl apply -f manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml
+  - kubectl apply -f manifests/${CI_ENVIRONMENT_NAME}/service.yaml
+  - kubectl apply -f manifests/${CI_ENVIRONMENT_NAME}/hpa.yaml
+  - kubectl apply -f manifests/${CI_ENVIRONMENT_NAME}/ingress.yaml
+  - POD_NAME=$(yq eval '.spec.template.spec.containers[0].name' manifests/${CI_ENVIRONMENT_NAME}/argo_rollouts.yaml)
+  - echo "$POD_NAME"
+  - sleep 30
+  - |
+    POD_STATUS=$(kubectl get pods -n ${APP_NAMESPACE} -o=json | jq -r '.items[] | select(.metadata.name | contains("'${POD_NAME}-'")) | .metadata.name' | xargs -I {} kubectl get pod {} -n ${APP_NAMESPACE} -o=json | jq '.status.containerStatuses[] | select(.state.waiting != null and (.state.waiting.reason | test("Error|CrashLoopBackOff|ErrImagePull|ImagePullBackOff|ErrImageNeverPull|CreateContainerConfigError|CreateContainerError"))) | {name: .name, namespace: "'${APP_NAMESPACE}'", reason: .state.waiting.reason}')
+  - echo "$POD_STATUS"
+  - echo "$POD_STATUS" > podstatus.json
+  - export POD_STATUS=$(grep 'reason:*' podstatus.json | tail -1 | awk '{print$2}' | sed 's/\"//g')
+  - echo $POD_STATUS
+  - if [ "$POD_STATUS" = "CrashLoopBackOff" ] || [ "$POD_STATUS" = "Error" ] || [ "$POD_STATUS" = "ErrImagePull" ] || [ "$POD_STATUS" = "ImagePullBackOff" ] || [ "$POD_STATUS" = "ErrImageNeverPull" ] || [ "$POD_STATUS" = "CreateContainerConfigError" ] || [ "$POD_STATUS" = "CreateContainerError" ]; then echo pod is not in Running state; exit 1; fi ;
+
+
+stages:
+  - dev-docker-image
+  - dev-deploy
+  - qa-docker-image
+  - qa-deploy
+  - stg-deploy
+  - prd-deploy
+
+dev_docker_image:
+  stage: dev-docker-image
+  environment:
+    name: dev
+  only:
+    - develop
+  before_script:
+    - *common-before-docker-image-script
+  script:
+    - *common-docker-image-script
+    - *dcoker-image-scanning-script
+
+DEV_Deploy:
+  stage: dev-deploy
+  environment:
+    name: dev
+  only:
+    - develop
+  needs: [dev_docker_image]
+  image: 076614340621.dkr.ecr.us-east-1.amazonaws.com/lgcomus-base-helm-shared:latest-mfe
+  before_script:
+    - export AWS_PROFILE=lgcomus-${CI_ENVIRONMENT_NAME}
+    - export ENV=DEV
+    - *deploy-script-before
+  script:
+    - *fetch-secret-manager-script
+    - *secret-manager-replace-script
+    - *deploy-script
+    - *common-deploy-script
+  allow_failure: false
+
+qa_docker_image:
+  stage: qa-docker-image
+  environment:
+    name: qa
+  only:
+    - release
+  before_script:
+    - *common-before-docker-image-script
+  script:
+    - *common-docker-image-script
+    - *dcoker-image-scanning-script
+
+qa_deploy:
+  stage: qa-deploy
+  environment:
+    name: qa
+  only:
+    - release
+  needs: [qa_docker_image]
+  image: 076614340621.dkr.ecr.us-east-1.amazonaws.com/lgcomus-base-helm-shared:latest-mfe
+  before_script:
+    - export AWS_PROFILE=lgcomus-${CI_ENVIRONMENT_NAME}
+    - export ENV=QA
+    - *deploy-script-before
+  script:
+    - *fetch-secret-manager-script
+    - *secret-manager-replace-script
+    - *deploy-script
+    - *common-deploy-script
+  allow_failure: false
+
+stg_deploy:
+  stage: stg-deploy
+  environment:
+    name: stg
+  only:
+    - release
+  when: manual
+  needs: [qa_deploy]
+  image: 076614340621.dkr.ecr.us-east-1.amazonaws.com/lgcomus-base-helm-shared:latest-mfe
+  before_script:
+    - export AWS_PROFILE=lgcomus-${CI_ENVIRONMENT_NAME}
+    - export ENV=STG
+    - *deploy-script-before
+  script:
+    - *fetch-secret-manager-script
+    - *secret-manager-replace-script
+    - *deploy-script
+    - *common-deploy-stg-prd-script
+  allow_failure: false
+
+PRD_Deploy:
+  stage: prd-deploy
+  environment:
+    name: prd
+  only:
+    - release
+  when: manual
+  needs: [stg_deploy]
+  image: 076614340621.dkr.ecr.us-east-1.amazonaws.com/lgcomus-base-helm-shared:latest-mfe
+  before_script:
+    - export AWS_PROFILE=lgcomus-${CI_ENVIRONMENT_NAME}
+    - export ENV=PRD
+    - *deploy-script-before
+  script:
+    - *fetch-secret-manager-script
+    - *secret-manager-replace-script
+    - *deploy-script
+    - *common-deploy-stg-prd-script
+  allow_failure: false

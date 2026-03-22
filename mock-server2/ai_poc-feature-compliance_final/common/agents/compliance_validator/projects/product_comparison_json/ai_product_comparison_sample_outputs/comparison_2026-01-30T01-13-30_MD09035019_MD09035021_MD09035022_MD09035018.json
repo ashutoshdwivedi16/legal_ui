@@ -1,0 +1,127 @@
+{
+  "summary": {
+    "quickPick": [
+      {
+        "productId": "BOUNCE.AUSALBK",
+        "productName": "LG xboom Bounce  | Bluetooth Speaker | xboom Signature Sound by will.i.am with Dual Passive Radiators",
+        "useCases": "you prioritize battery life, need a speaker with long playback time for extended outdoor activities or travel, or value robust sound with deep bass for large gatherings"
+      },
+      {
+        "productId": "BOUNCEC.AUSAWBK",
+        "productName": "LG xboom Bounce Core  | Bluetooth Speaker | xboom Signature Sound by will.i.am with Dual Passive Radiators",
+        "useCases": "you seek portability and ultra-compact design for on-the-go use, or need a budget-friendly option with reliable sound quality for casual listening"
+      },
+      {
+        "productId": "GRABC.AUSAWBK",
+        "productName": "LG xboom Grab Core | Bluetooth Speaker | xboom Signature Sound by will.i.am for Ultimate Portability",
+        "useCases": "you prioritize ultra-portability and lightweight design, or need a speaker for short trips or everyday carry with decent sound quality"
+      },
+      {
+        "productId": "STAGE301.AUSALBK",
+        "productName": "LG xboom Stage 301 | Bluetooth Speaker | xboom Signature Sound by will.i.am for Parties and Performances",
+        "useCases": "you need a high-performance speaker for large events or parties with advanced sound features, or value DJ and performance capabilities like scratch effects and sample creation"
+      }
+    ],
+    "differentiators": [
+      {
+        "key": "battery_life",
+        "label": "Battery Life",
+        "products": [
+          {
+            "productId": "BOUNCE.AUSALBK",
+            "summary": "Offers up to 30 hours of playback time, suitable for extended use without frequent recharging."
+          },
+          {
+            "productId": "BOUNCEC.AUSAWBK",
+            "summary": "Provides up to 29 hours of battery life, very close to the Bounce model."
+          },
+          {
+            "productId": "GRABC.AUSAWBK",
+            "summary": "Lasts up to 19 hours, still ample for daily use but shorter than Bounce models."
+          },
+          {
+            "productId": "STAGE301.AUSALBK",
+            "summary": "Offers 12 hours of battery life, more suited for events with potential recharging."
+          }
+        ]
+      },
+      {
+        "key": "power_output",
+        "label": "Power Output",
+        "products": [
+          {
+            "productId": "BOUNCE.AUSALBK",
+            "summary": "Delivers 20W power-on mode, balancing sound and energy efficiency."
+          },
+          {
+            "productId": "BOUNCEC.AUSAWBK",
+            "summary": "Also outputs 20W, matching the Bounce in power handling."
+          },
+          {
+            "productId": "GRABC.AUSAWBK",
+            "summary": "Has a lower 10W output, optimized for its compact size."
+          },
+          {
+            "productId": "STAGE301.AUSALBK",
+            "summary": "Significantly higher at 47W, ideal for loud environments and large gatherings."
+          }
+        ]
+      },
+      {
+        "key": "speaker_channels",
+        "label": "Speaker Channels",
+        "products": [
+          {
+            "productId": "BOUNCE.AUSALBK",
+            "summary": "Features 2.1 channel stereo with dual passive radiators for enhanced bass."
+          },
+          {
+            "productId": "BOUNCEC.AUSAWBK",
+            "summary": "Also has 2.1 channel stereo, similar to the Bounce model."
+          },
+          {
+            "productId": "GRABC.AUSAWBK",
+            "summary": "Has 1.1 channel stereo, a more basic setup for its compact size."
+          },
+          {
+            "productId": "STAGE301.AUSALBK",
+            "summary": "Specification not provided, but focused on party features like DJ effects."
+          }
+        ]
+      },
+      {
+        "key": "dimensions",
+        "label": "Size and Weight",
+        "products": [
+          {
+            "productId": "BOUNCE.AUSALBK",
+            "summary": "Measures 10.3\" x 3.9\" x 3.7\", weighing 2.9 lbs."
+          },
+          {
+            "productId": "BOUNCEC.AUSAWBK",
+            "summary": "Same size as Bounce: 10.3\" x 3.9\" x 3.7\", 2.9 lbs."
+          },
+          {
+            "productId": "GRABC.AUSAWBK",
+            "summary": "Compact at 8.3\" x 2.9\" x 2.9\", only 1.5 lbs."
+          },
+          {
+            "productId": "STAGE301.AUSALBK",
+            "summary": "Larger at 12.3\" x 12.9\" x 11.1\", 14.6 lbs."
+          }
+        ]
+      }
+    ],
+    "similarities": [
+      "All models are water and dust resistant with IP67 rating.",
+      "All support Bluetooth and USB Type-C charging.",
+      "All include essential accessories like USB Type-C cable and instruction manual.",
+      "All offer sound modes like User EQ, Standard, Sound Boost, and Clear Voice."
+    ],
+    "confidence": "high"
+  },
+  "cached": false,
+  "fallback": false,
+  "reason": null,
+  "raw_llm_response": null
+}

@@ -1,0 +1,49 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+.env/
+.env.localgit 
+.env.*
+.env
+!.env.example
+
+# Testing output
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.tox/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# IDE and editor folders
+.vscode/
+.idea/
+*.swp
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Logs and runtime files
+*.log
+*.pid
+
+# Docker
+**/docker-data/
+
+# Key
+keys/
+
+# Ignore ADK session DB files under common/agents
+/common/agents/**/session.db
+/common/agents/**/.adk/session.db

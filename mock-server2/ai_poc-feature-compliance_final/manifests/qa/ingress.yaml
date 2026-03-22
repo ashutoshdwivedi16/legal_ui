@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  labels:
+    app.kubernetes.io/instance: ai-services-ingress
+    app.kubernetes.io/name: ai-services-ingress
+  name: ai-services-ingress
+  namespace: ai-service
+spec:
+  rules:
+  - host: microservice.lgcomus-qa.lge.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: ai-services-qa
+            port:
+              number: 80
+        path: /us/common/ai/v1
+        pathType: ImplementationSpecific

@@ -127,27 +127,29 @@ export function ProjectTable({
                       const hasSources =
                         Array.isArray(row.project.data_sources) && row.project.data_sources.length > 0;
                       return (
-                    <Button
-                      title="Run Audit"
-                      size="sm"
-                      className="h-9 px-3 text-xs gap-1.5 font-bold shadow-sm transition-all hover:scale-105"
-                      onClick={() => onRunAudit(row.id)}
-                      disabled={isRunningAudit}
-                    >
-                      <PlayCircle className={`size-4 ${isRunningAudit && runningProjectId === row.id ? 'animate-spin' : ''}`} />
-                      <span>{isRunningAudit && runningProjectId === row.id ? 'Running...' : 'Run'}</span>
-                    </Button>
-                    <Button
-                      title="Run With Sources"
-                      size="sm"
-                      variant="outline"
-                      className="h-9 px-3 text-xs gap-1.5 font-bold border-border bg-background/50 backdrop-blur-sm transition-all hover:bg-muted"
-                      onClick={() => onRunAuditWithSources(row.project)}
-                      disabled={isRunningAudit || !hasSources}
-                    >
-                      <PlayCircle className="size-4" />
-                      <span>Run w/ Sources</span>
-                    </Button>
+                        <>
+                          <Button
+                            title="Run Audit"
+                            size="sm"
+                            className="h-9 px-3 text-xs gap-1.5 font-bold shadow-sm transition-all hover:scale-105"
+                            onClick={() => onRunAudit(row.id)}
+                            disabled={isRunningAudit}
+                          >
+                            <PlayCircle className={`size-4 ${isRunningAudit && runningProjectId === row.id ? 'animate-spin' : ''}`} />
+                            <span>{isRunningAudit && runningProjectId === row.id ? 'Running...' : 'Run'}</span>
+                          </Button>
+                          <Button
+                            title="Run With Sources"
+                            size="sm"
+                            variant="outline"
+                            className="h-9 px-3 text-xs gap-1.5 font-bold border-border bg-background/50 backdrop-blur-sm transition-all hover:bg-muted"
+                            onClick={() => onRunAuditWithSources(row.project)}
+                            disabled={isRunningAudit || !hasSources}
+                          >
+                            <PlayCircle className="size-4" />
+                            <span>Run w/ Sources</span>
+                          </Button>
+                        </>
                       );
                     })()}
                     <Button

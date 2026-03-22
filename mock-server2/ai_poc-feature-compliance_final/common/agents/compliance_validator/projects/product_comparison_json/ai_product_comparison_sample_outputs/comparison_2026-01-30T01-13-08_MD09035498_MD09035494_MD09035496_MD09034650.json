@@ -1,0 +1,128 @@
+{
+  "summary": {
+    "quickPick": [
+      {
+        "productId": "16Z90TP-K.AAW4U1",
+        "productName": "LG gram Pro 16 Inch, Thin and Lightweight Laptop, Windows 11 Home, Intel® Evo™ Edition - Intel® Core™ Ultra 7, 16GB RAM, 1TB SSD, White",
+        "useCases": "you prioritize portability, have a preference for OLED displays, or need a laptop for general productivity and light content creation"
+      },
+      {
+        "productId": "16Z90TR-E.ADB9U1",
+        "productName": "LG gram Pro 16 Inch, Thin and Lightweight Laptop, Windows 11 Home, Intel® Evo™ Edition - Intel® Core™ Ultra 9, 32GB RAM, 2TB (2x1TB) SSD, RTX 5050, Black",
+        "useCases": "you require high-performance graphics for gaming or creative apps, need ample storage and RAM for heavy multitasking, or prefer a larger and more powerful laptop"
+      },
+      {
+        "productId": "17Z90TR-E.ADB7U1",
+        "productName": "LG gram Pro 17 Inch, Thin and Lightweight Laptop, Windows 11 Home, Intel® Evo™ Edition - Intel® Core™ Ultra 7, 32GB RAM, 2TB SSD, RTX 5050, Black",
+        "useCases": "you prefer a larger screen for immersive experiences, need a balance of performance and portability, or want a laptop for gaming and content creation"
+      },
+      {
+        "productId": "17Z90TR-E.ADB9U1",
+        "productName": "LG gram Pro 17 Inch, Thin and Lightweight Laptop, Windows 11 Home, Intel® Evo™ Edition - Intel® Core™ Ultra 9, 32GB RAM, 2TB SSD, RTX 5050, Black",
+        "useCases": "you require top-tier performance for demanding tasks, have a preference for larger IPS displays, or need advanced graphics capabilities for gaming and creative work"
+      }
+    ],
+    "differentiators": [
+      {
+        "key": "display_size_and_type",
+        "label": "Display Size and Type",
+        "products": [
+          {
+            "productId": "16Z90TP-K.AAW4U1",
+            "summary": "Features a 16-inch OLED display with WQXGA+ (2880x1800) resolution, suitable for vibrant visuals and crisp text."
+          },
+          {
+            "productId": "16Z90TR-E.ADB9U1",
+            "summary": "Equipped with a 16-inch IPS display with WQXGA (2560x1600) resolution, ideal for detailed work and graphic design."
+          },
+          {
+            "productId": "17Z90TR-E.ADB7U1",
+            "summary": "Offers a 17-inch IPS display with WQXGA (2560x1600) resolution, providing ample screen real estate for multitasking."
+          },
+          {
+            "productId": "17Z90TR-E.ADB9U1",
+            "summary": "Also features a 17-inch IPS display with WQXGA (2560x1600) resolution, similar to the 17Z90TR-E.ADB7U1."
+          }
+        ]
+      },
+      {
+        "key": "processor_and_performance",
+        "label": "Processor and Performance",
+        "products": [
+          {
+            "productId": "16Z90TP-K.AAW4U1",
+            "summary": "Powered by Intel® Core™ Ultra 7 with up to 5.1 GHz turbo boost, suitable for general productivity and light content creation."
+          },
+          {
+            "productId": "16Z90TR-E.ADB9U1",
+            "summary": "Features Intel® Core™ Ultra 9 with up to 5.4 GHz turbo boost and NVIDIA RTX 5050 graphics, ideal for demanding tasks and gaming."
+          },
+          {
+            "productId": "17Z90TR-E.ADB7U1",
+            "summary": "Equipped with Intel® Core™ Ultra 7 with up to 5.1 GHz turbo boost and NVIDIA RTX 5050 graphics, balancing performance and portability."
+          },
+          {
+            "productId": "17Z90TR-E.ADB9U1",
+            "summary": "Also powered by Intel® Core™ Ultra 9 with up to 5.4 GHz turbo boost and NVIDIA RTX 5050 graphics, similar to the 16Z90TR-E.ADB9U1."
+          }
+        ]
+      },
+      {
+        "key": "memory_and_storage",
+        "label": "Memory and Storage",
+        "products": [
+          {
+            "productId": "16Z90TP-K.AAW4U1",
+            "summary": "Includes 16GB RAM and 1TB SSD storage, suitable for general use and light multitasking."
+          },
+          {
+            "productId": "16Z90TR-E.ADB9U1",
+            "summary": "Features 32GB RAM and 2TB (2x1TB) SSD storage, ideal for heavy multitasking and demanding applications."
+          },
+          {
+            "productId": "17Z90TR-E.ADB7U1",
+            "summary": "Equipped with 32GB RAM and 2TB (2x1TB) SSD storage, similar to the 17Z90TR-E.ADB9U1."
+          },
+          {
+            "productId": "17Z90TR-E.ADB9U1",
+            "summary": "Also includes 32GB RAM and 2TB (2x1TB) SSD storage, matching the 17Z90TR-E.ADB7U1."
+          }
+        ]
+      },
+      {
+        "key": "battery_life",
+        "label": "Battery Life",
+        "products": [
+          {
+            "productId": "16Z90TP-K.AAW4U1",
+            "summary": "Offers up to 19.5 hours of video playback with a 77 Wh battery."
+          },
+          {
+            "productId": "16Z90TR-E.ADB9U1",
+            "summary": "Provides up to 27 hours of video playback with a 90 Wh battery."
+          },
+          {
+            "productId": "17Z90TR-E.ADB7U1",
+            "summary": "Offers up to 25 hours of video playback with a 90 Wh battery."
+          },
+          {
+            "productId": "17Z90TR-E.ADB9U1",
+            "summary": "Also provides up to 25 hours of video playback with a 90 Wh battery."
+          }
+        ]
+      }
+    ],
+    "similarities": [
+      "All models run Windows 11 Home and feature Intel® Evo™ Edition.",
+      "Each model includes a backlit keyboard and FHD IR Webcam with Dual Mic.",
+      "All models have USB 4 Gen3x2 Type C ports with Power Delivery, Display Port, and Thunderbolt 4.",
+      "All models support Intel WiFi-7 and Bluetooth 5.4 for connectivity.",
+      "Each model comes with a 1-year limited warranty for parts and labor."
+    ],
+    "confidence": "high"
+  },
+  "cached": false,
+  "fallback": false,
+  "reason": null,
+  "raw_llm_response": null
+}

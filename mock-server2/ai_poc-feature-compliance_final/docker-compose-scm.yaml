@@ -1,0 +1,64 @@
+services:
+  scm-postgres:
+    image: postgres:16
+    container_name: scm-postgres
+    environment:
+      POSTGRES_DB: ai_data_store
+      POSTGRES_USER: scm_user
+      POSTGRES_PASSWORD: scm_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - scm_pg_data:/var/lib/postgresql/data
+      - ./services/scm_dashboard/db_init/00_init_magento.sh:/docker-entrypoint-initdb.d/00_init_magento.sh:ro
+      - ./services/scm_dashboard/db_init/init.sql:/docker-entrypoint-initdb.d/01_scm.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scm_user -d ai_data_store"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  scm-backend:
+    volumes:
+    - ./services/scm_dashboard/keys:/app/services/scm_dashboard/keys:ro
+    build:
+      context: .
+      dockerfile: ./services/scm_dashboard/Dockerfile
+    container_name: scm-backend
+    restart: on-failure
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    environment:
+      SCM_DB_HOST: scm-postgres
+      SCM_DB_PORT: 5432
+      SCM_DB_USER: scm_user
+      SCM_DB_PASSWORD: scm_password
+      SCM_DB_NAME: ai_data_store
+
+      # SSH Tunnel – AIC Bastion (loaded from .env if present)
+      SEC_AIC_BASTION_HOST: ${SEC_AIC_BASTION_HOST:-}
+      SEC_AIC_BASTION_PORT: ${SEC_AIC_BASTION_PORT:-22}
+      SEC_AIC_BASTION_USERNAME: ${SEC_AIC_BASTION_USERNAME:-}
+      SEC_AIC_BASTION_PRIVATE_KEY_PATH: ${SEC_AIC_BASTION_PRIVATE_KEY_PATH:-/app/keys/id_rsa}
+      # AIC DB (behind SSH tunnel, loaded from .env if present)
+      SEC_AIC_DB_HOST: ${SEC_AIC_DB_HOST:-127.0.0.1}
+      SEC_AIC_DB_PORT: ${SEC_AIC_DB_PORT:-3306}
+      SEC_AIC_DB_USER: ${SEC_AIC_DB_USER:-}
+      SEC_AIC_DB_PASSWORD: ${SEC_AIC_DB_PASSWORD:-}
+      SEC_AIC_DB_NAME: ${SEC_AIC_DB_NAME:-}
+
+      # 다른 서비스 Settings 필드 충족용
+      PDS_DB_HOST: dummy
+      PDS_DB_USER: dummy
+      PDS_DB_PASSWORD: dummy
+      AI_DB_HOST: dummy
+      AI_DB_USER: dummy
+      AI_DB_PASSWORD: dummy
+    depends_on:
+      scm-postgres:
+        condition: service_healthy
+
+volumes:
+  scm_pg_data:

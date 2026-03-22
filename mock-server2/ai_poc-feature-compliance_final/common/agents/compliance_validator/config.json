@@ -1,0 +1,64 @@
+{
+  "projects": [
+    {
+      "id": "1",
+      "name": "ALT-TEXT Project",
+      "folder_path": "${COMPLIANCE_PROJECTS_DIR}/Alt_text",
+      "validate_json_attributes": [
+      
+      ],
+      "validate_csv_columns": [
+        "Alt Text"
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Product Comparison",
+      "folder_path": "${COMPLIANCE_PROJECTS_DIR}/product_comparison_json/ai_product_comparison_sample_outputs",
+      "validate_json_attributes": [
+        "summary"
+      ],
+      "validate_csv_columns": [
+       
+      ]
+    },
+    {
+      "id": "3",
+      "name": "HR Policy Assistant",
+      "folder_path": "${COMPLIANCE_PROJECTS_DIR}/Alt_text",
+      "validate_json_attributes": [],
+      "validate_csv_columns": [
+        "Alt Text"
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Financial Advisor Bot",
+      "folder_path": "${COMPLIANCE_PROJECTS_DIR}/product_comparison_json/ai_product_comparison_sample_outputs",
+      "validate_json_attributes": [
+        "summary"
+      ],
+      "validate_csv_columns": []
+    },
+    {
+      "id": "p3-json-only",
+      "name": "JSON Only Project",
+      "folder_path": "${COMPLIANCE_PROJECTS_DIR}/p3-json-only",
+      "validate_json_attributes": [
+        "text",
+        "notes"
+      ],
+      "validate_csv_columns": []
+    },
+    {
+      "id": "p4-csv-only",
+      "name": "CSV Only Project",
+      "folder_path": "${COMPLIANCE_PROJECTS_DIR}/p4-csv-only",
+      "validate_json_attributes": [],
+      "validate_csv_columns": [
+        "headline",
+        "description"
+      ]
+    }
+  ]
+}

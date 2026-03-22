@@ -507,6 +507,7 @@ const Dashboard: React.FC<DashboardProps> = ({ projectsList }) => {
         <FailureDrillDown
           jobId={String(drillDownJobId)}
           onClose={() => setDrillDownJobId(null)}
+          onIgnoreSuccess={() => refetch()}
         />
       )}
 

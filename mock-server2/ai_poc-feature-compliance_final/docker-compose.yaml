@@ -1,0 +1,106 @@
+services:
+  # Product Comparison API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: product-comparison-api:local
+    container_name: product-comparison-api
+    env_file:
+      - ./.env
+    environment:
+      # App runtime
+      APP_ENV: ${APP_ENV:-development}
+      APP_LOG_LEVEL: ${APP_LOG_LEVEL:-INFO}
+      # HTTP server
+      HOST: ${HOST:-0.0.0.0}
+      PORT: ${PORT:-8000}
+      # Cache/Redis settings (override for docker network)
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_DB: ${REDIS_DB:-0}
+      # PDS (MySQL) - override for docker network
+      PDS_DB_HOST: ${PDS_DB_HOST:-mysql}
+      PDS_DB_PORT: ${PDS_DB_PORT:-3306}
+      PDS_DB_USER: ${PDS_DB_USER:-root}
+      PDS_DB_PASSWORD: ${PDS_DB_PASSWORD:-rootpass}
+      PDS_DB_NAME: ${PDS_DB_NAME:-product_data_store}
+      # AI DB (Postgres) - override for docker network
+      AI_DB_HOST: ${AI_DB_HOST:-postgres}
+      AI_DB_PORT: ${AI_DB_PORT:-5432}
+      AI_DB_USER: ${AI_DB_USER:-postgres}
+      AI_DB_PASSWORD: ${AI_DB_PASSWORD:-postgres}
+      AI_DB_NAME: ${AI_DB_NAME:-ai_db}
+    ports:
+      - "8000:8000"
+    # Local output storage
+    volumes:
+      - ./outputs:/app/services/product_comparison/outputs
+    depends_on:
+      redis:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+  # for local only
+  redis:
+    image: redis:7-alpine
+    container_name: product-comparison-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  # for local only
+  mysql:
+    image: mysql:8.0
+    container_name: product-comparison-mysql
+    environment:
+      MYSQL_DATABASE: product_data_store
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./services/product_comparison/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    command: --default-authentication-plugin=caching_sha2_password
+    restart: unless-stopped
+
+  # AI DB (Postgres) for local only
+  postgres:
+    image: postgres:16-alpine
+    container_name: product-comparison-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./services/product_comparison/db/ai_init.sql:/docker-entrypoint-initdb.d/ai_init.sql:ro
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  postgres_data:

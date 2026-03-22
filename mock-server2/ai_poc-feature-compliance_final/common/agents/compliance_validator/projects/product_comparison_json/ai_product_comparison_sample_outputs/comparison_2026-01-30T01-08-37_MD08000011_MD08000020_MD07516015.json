@@ -1,0 +1,107 @@
+{
+  "summary": {
+    "quickPick": [
+      {
+        "productId": "WKGX201HBA",
+        "productName": "Single Unit Front Load LG WashTower™ with Center Control™ 4.5 cu. ft. Washer and 7.4 cu. ft. Gas Dryer",
+        "useCases": "you prioritize gas dryer functionality, need a large washer capacity, or value smart home integration"
+      },
+      {
+        "productId": "WKE100HVA",
+        "productName": "Single Unit Front Load LG WashTower™ with Center Control™ 4.5 cu. ft. Washer and 7.4 cu. ft. Electric Dryer",
+        "useCases": "you prefer electric dryer functionality, seek energy efficiency, or want a more affordable upfront cost"
+      },
+      {
+        "productId": "WKG101HVA",
+        "productName": "Single Unit Front Load LG WashTower™ with Center Control™ 4.5 cu. ft. Washer and 7.4 cu. ft. Gas Dryer",
+        "useCases": "you prioritize gas dryer functionality, need a large washer capacity, or value smart home integration with a different color option"
+      }
+    ],
+    "differentiators": [
+      {
+        "key": "dryer_power_source",
+        "label": "Dryer Power Source",
+        "products": [
+          {
+            "productId": "WKGX201HBA",
+            "summary": "Features a gas dryer with 20,000 BTU rating for efficient drying."
+          },
+          {
+            "productId": "WKE100HVA",
+            "summary": "Comes with an electric dryer requiring 240V, 30 Amps for operation."
+          },
+          {
+            "productId": "WKG101HVA",
+            "summary": "Also features a gas dryer with 20,000 BTU rating for efficient drying."
+          }
+        ]
+      },
+      {
+        "key": "energy_efficiency",
+        "label": "Energy Efficiency",
+        "products": [
+          {
+            "productId": "WKGX201HBA",
+            "summary": "Has a CEF of 3.49 and IMEF of 2.92 for energy efficiency."
+          },
+          {
+            "productId": "WKE100HVA",
+            "summary": "Boasts a higher CEF of 3.94 and same IMEF of 2.92 for enhanced energy efficiency."
+          },
+          {
+            "productId": "WKG101HVA",
+            "summary": "Features a CEF of 3.49 and IMEF of 2.92 for energy efficiency."
+          }
+        ]
+      },
+      {
+        "key": "product_color",
+        "label": "Product Color",
+        "products": [
+          {
+            "productId": "WKGX201HBA",
+            "summary": "Available in Black Steel (B)."
+          },
+          {
+            "productId": "WKE100HVA",
+            "summary": "Comes in Graphite Steel (V) and White (W)."
+          },
+          {
+            "productId": "WKG101HVA",
+            "summary": "Available in Graphite Steel (V)."
+          }
+        ]
+      },
+      {
+        "key": "matching_dryer_option",
+        "label": "Matching Dryer Option",
+        "products": [
+          {
+            "productId": "WKGX201HBA",
+            "summary": "Gas dryer option is included."
+          },
+          {
+            "productId": "WKE100HVA",
+            "summary": "Electric dryer option WKEX200HBA is available separately."
+          },
+          {
+            "productId": "WKG101HVA",
+            "summary": "Gas dryer option is included, with electric dryer option WKE100HVA available separately."
+          }
+        ]
+      }
+    ],
+    "similarities": [
+      "All models have a 4.5 cu. ft. washer capacity and 7.4 cu. ft. dryer capacity.",
+      "Each model features LG's ThinQ® Smart Technology for smart home integration.",
+      "All models have a full touch electronic control panel with LED display and Center Control®.",
+      "All models support Wi-Fi and remote start for enhanced convenience.",
+      "All models have a NeveRust™ Stainless Steel Drum for durability."
+    ],
+    "confidence": "high"
+  },
+  "cached": false,
+  "fallback": false,
+  "reason": null,
+  "raw_llm_response": null
+}

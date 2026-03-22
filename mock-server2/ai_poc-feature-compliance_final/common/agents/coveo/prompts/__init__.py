@@ -1,0 +1,1 @@
+"""Coveo agent prompts."""

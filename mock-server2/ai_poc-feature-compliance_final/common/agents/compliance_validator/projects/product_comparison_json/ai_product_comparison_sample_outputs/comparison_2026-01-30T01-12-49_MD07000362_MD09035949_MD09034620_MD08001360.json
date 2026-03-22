@@ -1,0 +1,127 @@
+{
+  "summary": {
+    "quickPick": [
+      {
+        "productId": "HU70LA",
+        "productName": "LG HU70LA 4K UHD LED Smart Home Theater CineBeam Projector",
+        "useCases": "you need high brightness for well-lit rooms, you prefer a higher resolution and more lumens for daytime viewing, or you want a projector with a higher contrast ratio for detailed images"
+      },
+      {
+        "productId": "PF610P",
+        "productName": "LG PF610P Full HD LED Portable Smart Home Theater CineBeam Projector",
+        "useCases": "you prioritize portability and lower power consumption, you mainly watch in darker environments, or you seek a budget-friendly option with good image quality"
+      },
+      {
+        "productId": "PU615U",
+        "productName": "LG CineBeam S 4K UHD Smart Triple Laser UST Projector PU615U",
+        "useCases": "you require a projector for very bright rooms or large screen sizes, you want motorized focus and edge adjustment for precise image setup, or you need a high contrast ratio and low input lag for cinematic experiences"
+      },
+      {
+        "productId": "HU710PB.AUSG",
+        "productName": "LG CineBeam Q 4K UHD Smart Portable Laser Projector HU710PB.AUSG",
+        "useCases": "you need a highly portable projector with good brightness and image quality, you want a mono speaker setup with clear audio, or you prioritize a compact design for easy placement"
+      }
+    ],
+    "differentiators": [
+      {
+        "key": "brightness",
+        "label": "Brightness",
+        "products": [
+          {
+            "productId": "HU70LA",
+            "summary": "Up to 1500 ANSI Lumens, suitable for daytime viewing in well-lit rooms with some ambient light."
+          },
+          {
+            "productId": "PF610P",
+            "summary": "Up to 1000 ANSI Lumens, best for evening or darker room viewing with controlled lighting."
+          },
+          {
+            "productId": "PU615U",
+            "summary": "500 ANSI Lumens, can handle bright rooms but may struggle in very well-lit spaces."
+          },
+          {
+            "productId": "HU710PB.AUSG",
+            "summary": "65W power consumption, delivers 500 lumens brightness in a highly portable design."
+          }
+        ]
+      },
+      {
+        "key": "native_resolution",
+        "label": "Native Resolution",
+        "products": [
+          {
+            "productId": "HU70LA",
+            "summary": "4K UHD (3840 x 2160), provides crisp and detailed images for movies and games."
+          },
+          {
+            "productId": "PF610P",
+            "summary": "FHD (1920 x 1080), offers good image quality but less detailed than 4K."
+          },
+          {
+            "productId": "PU615U",
+            "summary": "4K UHD (3840 x 2160), delivers sharp images with fine details."
+          },
+          {
+            "productId": "HU710PB.AUSG",
+            "summary": "4K UHD (3840 x 2160), provides clear and vibrant visuals."
+          }
+        ]
+      },
+      {
+        "key": "screen_size",
+        "label": "Screen Size",
+        "products": [
+          {
+            "productId": "HU70LA",
+            "summary": "60\\\" ~ 140\\\" screen size support, flexible for various room sizes."
+          },
+          {
+            "productId": "PF610P",
+            "summary": "60\\\" ~ 120\\\" screen size support, suitable for smaller to medium rooms."
+          },
+          {
+            "productId": "PU615U",
+            "summary": "40\\\" ~ 100\\\" screen size support, ideal for medium-sized rooms."
+          },
+          {
+            "productId": "HU710PB.AUSG",
+            "summary": "50\\\" ~ 120\\\" screen size support, great for portable use in various settings."
+          }
+        ]
+      },
+      {
+        "key": "power_consumption",
+        "label": "Power Consumption",
+        "products": [
+          {
+            "productId": "HU70LA",
+            "summary": "210W power consumption, higher but offers more brightness and features."
+          },
+          {
+            "productId": "PF610P",
+            "summary": "100W power consumption, energy-efficient with lower brightness."
+          },
+          {
+            "productId": "PU615U",
+            "summary": "73W power consumption, balances performance and energy efficiency."
+          },
+          {
+            "productId": "HU710PB.AUSG",
+            "summary": "65W power consumption, highly energy-efficient and portable."
+          }
+        ]
+      }
+    ],
+    "similarities": [
+      "All projectors support HDR10 and have a contrast ratio of 150,000:1 or higher for good image depth.",
+      "All include LG Smart TV with webOS and support for wireless screen sharing and Bluetooth connectivity.",
+      "All projectors have stereo speakers or mono speakers with Bluetooth sound out and Dolby Atmos compatibility.",
+      "All models come with a standard remote control and simple book manual."
+    ],
+    "confidence": "high"
+  },
+  "cached": false,
+  "fallback": false,
+  "reason": null,
+  "raw_llm_response": null
+}

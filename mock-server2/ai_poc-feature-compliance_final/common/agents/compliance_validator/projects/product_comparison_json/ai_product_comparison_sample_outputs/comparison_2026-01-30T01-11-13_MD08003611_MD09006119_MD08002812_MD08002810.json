@@ -1,0 +1,128 @@
+{
+  "summary": {
+    "quickPick": [
+      {
+        "productId": "LRFGC2706S",
+        "productName": "27 cu. ft. Smart InstaView® Counter-Depth MAX™ French Door Refrigerator",
+        "useCases": "you prioritize a large refrigerator capacity, need advanced ice production features like IcePlus™, or value InstaView door functionality for quick access to contents"
+      },
+      {
+        "productId": "LRFLC2706S",
+        "productName": "27 cu. ft. Smart Counter-Depth MAX™ French Door Refrigerator",
+        "useCases": "you seek a balance between capacity and features without the InstaView door, or you prefer a more straightforward refrigerator design"
+      },
+      {
+        "productId": "LRYKC2606S",
+        "productName": "26 cu. ft. Counter-Depth French Door Refrigerator - Stainless Steel",
+        "useCases": "you have limited kitchen space but still want a spacious refrigerator, or you prioritize advanced water and ice dispensing features like UVnano™"
+      },
+      {
+        "productId": "SRFB27W3",
+        "productName": "LG STUDIO 27 cu. ft. Smart Counter-Depth MAX™ French Door Refrigerator",
+        "useCases": "you prefer a premium, coordinated look with LG STUDIO handles, or you value Door Cooling+ technology for faster cooling"
+      }
+    ],
+    "differentiators": [
+      {
+        "key": "capacity",
+        "label": "Capacity",
+        "products": [
+          {
+            "productId": "LRFGC2706S",
+            "summary": "Offers 26.5 cu.ft. total capacity, with 17.9 cu.ft. in the refrigerator section and 8.6 cu.ft. in the freezer."
+          },
+          {
+            "productId": "LRFLC2706S",
+            "summary": "Also provides 26.5 cu.ft. total capacity, matching the LRFGC2706S in space allocation."
+          },
+          {
+            "productId": "LRYKC2606S",
+            "summary": "Has a slightly smaller 25.5 cu.ft. total capacity, with 16.9 cu.ft. refrigerator space and 8.6 cu.ft. freezer space."
+          },
+          {
+            "productId": "SRFB27W3",
+            "summary": "Features 26.5 cu.ft. total capacity, similar to LRFGC2706S and LRFLC2706S."
+          }
+        ]
+      },
+      {
+        "key": "ice_water_system",
+        "label": "Ice & Water System",
+        "products": [
+          {
+            "productId": "LRFGC2706S",
+            "summary": "Includes IcePlus™ for enhanced ice production and an internal water dispenser."
+          },
+          {
+            "productId": "LRFLC2706S",
+            "summary": "Similar to LRFGC2706S with internal water dispenser and IcePlus™."
+          },
+          {
+            "productId": "LRYKC2606S",
+            "summary": "Features a UVnano™ Ice & Water Dispenser with advanced purification and 3.0 lbs daily ice production."
+          },
+          {
+            "productId": "SRFB27W3",
+            "summary": "Includes icemaker and ice bin in the freezer, with premium LED lighting."
+          }
+        ]
+      },
+      {
+        "key": "cooling_technology",
+        "label": "Cooling",
+        "products": [
+          {
+            "productId": "SRFB27W3",
+            "summary": "Offers Door Cooling+ technology for faster cooling and more consistent temperatures."
+          },
+          {
+            "productId": "LRFGC2706S",
+            "summary": "Uses Smart Inverter Compressor for efficient cooling."
+          },
+          {
+            "productId": "LRFLC2706S",
+            "summary": "Also utilizes Smart Inverter Compressor."
+          },
+          {
+            "productId": "LRYKC2606S",
+            "summary": "Features Smart Inverter technology for efficient operation."
+          }
+        ]
+      },
+      {
+        "key": "design_features",
+        "label": "Design",
+        "products": [
+          {
+            "productId": "LRFGC2706S",
+            "summary": "Includes InstaView door for easy content access."
+          },
+          {
+            "productId": "LRYKC2606S",
+            "summary": "Boasts a fingerprint and smudge-resistant exterior in PrintProof™ Black Stainless Steel or Stainless Steel."
+          },
+          {
+            "productId": "SRFB27W3",
+            "summary": "Features LG STUDIO design with matching handles and premium aesthetic."
+          },
+          {
+            "productId": "LRFLC2706S",
+            "summary": "Has a clean design with bar handles."
+          }
+        ]
+      }
+    ],
+    "similarities": [
+      "All models are ENERGY STAR Qualified with 632 kWh/Year energy consumption.",
+      "Each refrigerator features ThinQ® Smart Technology for smart home integration.",
+      "All have internal water dispensers and advanced ice makers.",
+      "All models include multi-air flow technology for consistent cooling.",
+      "All support ADA compliance and child lock features."
+    ],
+    "confidence": "high"
+  },
+  "cached": false,
+  "fallback": false,
+  "reason": null,
+  "raw_llm_response": null
+}

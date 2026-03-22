@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: ai-services-stg
+  namespace: ai-service
+  labels:
+    app.kubernetes.io/instance: ai-services-stg
+    app.kubernetes.io/name: ai-services-stg
+spec:
+  replicas: MIN_REPLICAS
+  strategy:
+    blueGreen: 
+      activeService: ai-services-stg
+      previewService: ai-services-stg-preview
+      autoPromotionEnabled: true
+      scaleDownDelaySeconds: 120
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: ai-services-stg
+      app.kubernetes.io/name: ai-services-stg
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: ai-services-stg
+        app.kubernetes.io/name: ai-services-stg
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 10
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/name
+                      operator: In
+                      values:
+                        - ai-services-stg
+                topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: ai-services-stg
+          image: IMAGE_VERSION
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: ai-services-secret-stg
+          resources:
+            limits:
+              cpu: CPU_LIMIT
+              memory: MEMORY_LIMIT
+            requests:
+              memory: MEMORY_REQUEST
+              cpu: CPU_REQUEST
