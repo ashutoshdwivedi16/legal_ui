@@ -7,15 +7,10 @@ Docs:  http://localhost:9090/docs
 """
 from __future__ import annotations
 
-import os
 from dotenv import load_dotenv
 
-# Load .env FIRST so all env vars (GROQ_API_KEY, USE_SQLITE, etc.)
-# are in os.environ before any module imports them.
+# Load .env FIRST so all env vars are in os.environ before any module imports them.
 load_dotenv()
-
-os.environ.setdefault("USE_SQLITE", "true")
-os.environ.setdefault("SQLITE_PATH", "./dev.db")
 
 from contextlib import asynccontextmanager
 
@@ -29,17 +24,17 @@ from services.compliance.api.router import router as compliance_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Auto-create all SQLAlchemy tables on startup
+    # Run any pending schema migrations on startup
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    print("✅  SQLite tables ready — compliance service is up")
+    print("✅  Compliance service is up")
     yield
     print("🛑  Shutting down compliance service")
 
 
 app = FastAPI(
-    title="Compliance Service (SQLite dev mode)",
-    description="Real FastAPI compliance backend — backed by local SQLite, no Postgres needed.",
+    title="Compliance Service",
+    description="FastAPI compliance backend backed by PostgreSQL.",
     version="1.0.0",
     lifespan=lifespan,
 )

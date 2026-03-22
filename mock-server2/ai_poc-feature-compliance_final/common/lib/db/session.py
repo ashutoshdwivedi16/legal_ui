@@ -1,5 +1,4 @@
 """Database session management."""
-import os
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from common.config.database import settings
@@ -13,20 +12,7 @@ from common.constants.logging import (
     DATABASE_INIT_FAILED
 )
 
-# ── SQLite override for lightweight local development ──────────────────────
-# Set USE_SQLITE=true in .env to run without PostgreSQL.
-_use_sqlite = os.getenv("USE_SQLITE", "false").lower() == "true"
-if _use_sqlite:
-    _sqlite_path = os.getenv("SQLITE_PATH", "./dev.db")
-    _db_url = f"sqlite+aiosqlite:///{_sqlite_path}"
-    engine = create_async_engine(
-        _db_url,
-        echo=settings.echo_sql,
-        future=True,
-        connect_args={"check_same_thread": False},
-    )
-else:
-    engine = create_async_engine(settings.get_database_url(), echo=settings.echo_sql, future=True)
+engine = create_async_engine(settings.get_database_url(), echo=settings.echo_sql, future=True)
 async_session_maker = async_sessionmaker[AsyncSession](engine, expire_on_commit=False)
 
 

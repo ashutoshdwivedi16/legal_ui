@@ -1,21 +1,12 @@
 model_list:
-  - model_name: groq/llama-3.3-70b-versatile
+  - model_name: openai/us.anthropic.claude-3-5-haiku-20241022-v1:0
     litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: "os.environ/GROQ_API_KEY"
-
-  # Also expose as a generic name so any "llm_model" value works
-  - model_name: groq-default
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: "os.environ/GROQ_API_KEY"
+      model: openai/us.anthropic.claude-3-5-haiku-20241022-v1:0
+      api_base: "${LITELLM_BASE_URL}"
+      api_key: "${LITELLM_API_KEY}"
 
 general_settings:
-  # Note: LiteLLM UI login requires PostgreSQL. For local dev without Postgres,
-  # the proxy runs open (no auth) — use the API directly at http://localhost:9999
-  drop_params: true                   # silently drop unsupported params
+  drop_params: true
 
 litellm_settings:
-  telemetry: false                    # disable anonymous telemetry
-  success_callback: []
-  failure_callback: []
+  telemetry: false
