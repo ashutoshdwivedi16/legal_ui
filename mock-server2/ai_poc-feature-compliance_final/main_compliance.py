@@ -53,4 +53,4 @@ app.include_router(compliance_router, prefix="/us/common/ai/v1")
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "db": "sqlite", "service": "compliance"}
+    return {"status": "ok", "db": "postgres", "service": "compliance"}
